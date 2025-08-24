@@ -1,147 +1,118 @@
-// Rate limiting utilities
+// Rate limiting utilities using @nuxtjs/security
+// This file provides additional rate limiting helpers for specific use cases
 
-interface RateLimitConfig {
-  max: number // Maximum requests
-  window: number // Time window in seconds
-  keyGenerator?: (event: any) => string
+/**
+ * Rate limits for different endpoints
+ * These are configured in nuxt.config.ts via routeRules
+ */
+export const rateLimits = {
+  // General API rate limit
+  api: {
+    tokensPerInterval: 100,
+    interval: 60000 // 1 minute
+  },
+  
+  // Fact check submission rate limit
+  factCheckSubmission: {
+    tokensPerInterval: 5,
+    interval: 300000 // 5 minutes
+  },
+  
+  // Comment creation rate limit
+  commentCreation: {
+    tokensPerInterval: 10,
+    interval: 60000 // 1 minute
+  },
+  
+  // Voting rate limit
+  voting: {
+    tokensPerInterval: 50,
+    interval: 60000 // 1 minute
+  },
+  
+  // Search rate limit
+  search: {
+    tokensPerInterval: 30,
+    interval: 60000 // 1 minute
+  },
+  
+  // Authentication rate limit
+  auth: {
+    tokensPerInterval: 5,
+    interval: 300000 // 5 minutes
+  },
+  
+  // Report submission rate limit
+  reportSubmission: {
+    tokensPerInterval: 3,
+    interval: 600000 // 10 minutes
+  }
 }
 
-interface RateLimitStore {
+/**
+ * Custom rate limiting for specific business logic
+ * Note: Primary rate limiting is handled by @nuxtjs/security middleware
+ */
+interface CustomRateLimitStore {
   [key: string]: {
     count: number
     resetTime: number
   }
 }
 
-// In-memory store (in production, use Redis)
-const store: RateLimitStore = {}
+// In-memory store for custom rate limiting (use Redis in production)
+const customStore: CustomRateLimitStore = {}
 
 /**
- * Rate limiting middleware
+ * Custom rate limit for business-specific scenarios
+ * @param key - Unique identifier for the rate limit
+ * @param max - Maximum requests allowed
+ * @param windowMs - Time window in milliseconds
  */
-export async function rateLimit(event: any, config: RateLimitConfig): Promise<void> {
-  const key = config.keyGenerator ? config.keyGenerator(event) : getClientIP(event) || 'unknown'
+export function checkCustomRateLimit(key: string, max: number, windowMs: number): { allowed: boolean; remainingTime?: number } {
   const now = Date.now()
-  const windowMs = config.window * 1000
   
   // Clean up expired entries
-  if (store[key] && store[key].resetTime < now) {
-    delete store[key]
+  if (customStore[key] && customStore[key].resetTime < now) {
+    delete customStore[key]
   }
   
   // Initialize or increment counter
-  if (!store[key]) {
-    store[key] = {
+  if (!customStore[key]) {
+    customStore[key] = {
       count: 1,
       resetTime: now + windowMs
     }
-  } else {
-    store[key].count++
+    return { allowed: true }
   }
+  
+  customStore[key].count++
   
   // Check if limit exceeded
-  if (store[key].count > config.max) {
-    const remainingTime = Math.ceil((store[key].resetTime - now) / 1000)
-    
-    setHeader(event, 'X-RateLimit-Limit', config.max.toString())
-    setHeader(event, 'X-RateLimit-Remaining', '0')
-    setHeader(event, 'X-RateLimit-Reset', store[key].resetTime.toString())
-    setHeader(event, 'Retry-After', remainingTime.toString())
-    
-    throw createError({
-      statusCode: 429,
-      statusMessage: `Rate limit exceeded. Try again in ${remainingTime} seconds.`
-    })
+  if (customStore[key].count > max) {
+    const remainingTime = Math.ceil((customStore[key].resetTime - now) / 1000)
+    return { allowed: false, remainingTime }
   }
   
-  // Set rate limit headers
-  setHeader(event, 'X-RateLimit-Limit', config.max.toString())
-  setHeader(event, 'X-RateLimit-Remaining', (config.max - store[key].count).toString())
-  setHeader(event, 'X-RateLimit-Reset', store[key].resetTime.toString())
+  return { allowed: true }
 }
 
 /**
- * Rate limits for different endpoints
+ * Get remaining requests for a custom rate limit
  */
-export const rateLimits = {
-  // General API rate limit
-  api: {
-    max: 100,
-    window: 60 // 1 minute
-  },
-  
-  // Fact check submission rate limit
-  factCheckSubmission: {
-    max: 5,
-    window: 300, // 5 minutes
-    keyGenerator: async (event: any) => {
-      const userId = await getUserIdFromRequest(event)
-      return userId ? `fact_check_${userId}` : `fact_check_ip_${getClientIP(event)}`
-    }
-  },
-  
-  // Comment creation rate limit
-  commentCreation: {
-    max: 10,
-    window: 60, // 1 minute
-    keyGenerator: async (event: any) => {
-      const userId = await getUserIdFromRequest(event)
-      return userId ? `comment_${userId}` : `comment_ip_${getClientIP(event)}`
-    }
-  },
-  
-  // Voting rate limit
-  voting: {
-    max: 50,
-    window: 60, // 1 minute
-    keyGenerator: async (event: any) => {
-      const userId = await getUserIdFromRequest(event)
-      return userId ? `vote_${userId}` : `vote_ip_${getClientIP(event)}`
-    }
-  },
-  
-  // Search rate limit
-  search: {
-    max: 30,
-    window: 60, // 1 minute
-    keyGenerator: (event: any) => `search_${getClientIP(event)}`
-  },
-  
-  // Authentication rate limit
-  auth: {
-    max: 5,
-    window: 300, // 5 minutes
-    keyGenerator: (event: any) => `auth_${getClientIP(event)}`
-  },
-  
-  // Report submission rate limit
-  reportSubmission: {
-    max: 3,
-    window: 600, // 10 minutes
-    keyGenerator: async (event: any) => {
-      const userId = await getUserIdFromRequest(event)
-      return userId ? `report_${userId}` : `report_ip_${getClientIP(event)}`
-    }
+export function getRemainingRequests(key: string, max: number): number {
+  const entry = customStore[key]
+  if (!entry || entry.resetTime < Date.now()) {
+    return max
   }
+  return Math.max(0, max - entry.count)
 }
 
 /**
- * Apply rate limit to endpoint
+ * Clear custom rate limit for a specific key
  */
-export async function applyRateLimit(event: any, limitType: keyof typeof rateLimits): Promise<void> {
-  const config = rateLimits[limitType]
-  
-  // If key generator is async, await it
-  if (config.keyGenerator) {
-    const keyGen = config.keyGenerator
-    const key = await keyGen(event)
-    await rateLimit(event, {
-      ...config,
-      keyGenerator: () => key
-    })
-  } else {
-    await rateLimit(event, config)
-  }
+export function clearCustomRateLimit(key: string): void {
+  delete customStore[key]
 }
 
 /**
@@ -165,8 +136,9 @@ export class RedisRateLimit {
       return count <= max
     } catch (error) {
       console.error('Redis rate limit error:', error)
-      // Fallback to in-memory store
-      return true
+      // Fallback to custom store
+      const result = checkCustomRateLimit(key, max, window * 1000)
+      return result.allowed
     }
   }
   
@@ -176,7 +148,7 @@ export class RedisRateLimit {
       return Math.max(0, max - parseInt(count))
     } catch (error) {
       console.error('Redis get remaining error:', error)
-      return max
+      return getRemainingRequests(key, max)
     }
   }
 }
