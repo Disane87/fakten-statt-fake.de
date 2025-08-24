@@ -9,6 +9,38 @@ export default defineNuxtConfig({
     'nuxt-security'
   ],
 
+  // Tailwind CSS configuration
+  tailwindcss: {
+    configPath: '~/tailwind.config.js',
+    cssPath: '~/assets/css/main.css',
+    config: {
+      content: [
+        './components/**/*.{js,vue,ts}',
+        './layouts/**/*.vue', 
+        './pages/**/*.vue',
+        './plugins/**/*.{js,ts}',
+        './app.vue',
+        './error.vue'
+      ],
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              500: '#3b82f6', 
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  },
+
   // Runtime configuration
   runtimeConfig: {
     // Private keys (only available on server-side)
@@ -29,6 +61,14 @@ export default defineNuxtConfig({
 
   // CSS configuration
   css: ['~/assets/css/main.css'],
+
+  // PostCSS configuration  
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {},
+      autoprefixer: {}
+    }
+  },
 
   // TypeScript configuration
   typescript: {
