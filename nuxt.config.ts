@@ -62,14 +62,6 @@ export default defineNuxtConfig({
   // CSS configuration
   css: ['~/assets/css/main.css'],
 
-  // PostCSS configuration  
-  postcss: {
-    plugins: {
-      '@tailwindcss/postcss': {},
-      autoprefixer: {}
-    }
-  },
-
   // TypeScript configuration
   typescript: {
     strict: true,
