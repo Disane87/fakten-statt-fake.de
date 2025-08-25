@@ -27,26 +27,32 @@
         
         <!-- Feature Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
-          <div class="rounded-lg border bg-card p-6 shadow-sm">
-            <h3 class="font-semibold text-card-foreground mb-2">🚀 Nuxt 4</h3>
-            <p class="text-sm text-muted-foreground">
-              The latest version of Nuxt.js with improved performance and developer experience.
-            </p>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>🚀 Nuxt 4</CardTitle>
+              <CardDescription>
+                The latest version of Nuxt.js with improved performance and developer experience.
+              </CardDescription>
+            </CardHeader>
+          </Card>
           
-          <div class="rounded-lg border bg-card p-6 shadow-sm">
-            <h3 class="font-semibold text-card-foreground mb-2">🎨 Tailwind CSS 4</h3>
-            <p class="text-sm text-muted-foreground">
-              Next-generation utility-first CSS framework with enhanced features.
-            </p>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>🎨 Tailwind CSS 4</CardTitle>
+              <CardDescription>
+                Next-generation utility-first CSS framework with enhanced features.
+              </CardDescription>
+            </CardHeader>
+          </Card>
           
-          <div class="rounded-lg border bg-card p-6 shadow-sm">
-            <h3 class="font-semibold text-card-foreground mb-2">🧩 shadcn-vue</h3>
-            <p class="text-sm text-muted-foreground">
-              Beautiful, accessible Vue components built on top of Radix Vue and Tailwind.
-            </p>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>🧩 shadcn-vue</CardTitle>
+              <CardDescription>
+                Beautiful, accessible Vue components built on top of Radix Vue and Tailwind.
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
         
         <!-- Technology Stack -->
@@ -68,6 +74,10 @@
 
 <script setup>
 import Button from '@/components/ui/Button.vue'
+import Card from '@/components/ui/Card.vue'
+import CardHeader from '@/components/ui/CardHeader.vue'
+import CardTitle from '@/components/ui/CardTitle.vue'
+import CardDescription from '@/components/ui/CardDescription.vue'
 
 // Set page title and meta
 useHead({
