@@ -1,6 +1,7 @@
-
 import type { IncomingMessage } from 'http'
+import { logger } from 'nuxt/kit';
 import { $fetch } from 'ofetch'
+import { readBody } from 'h3'
 
 type FactCheckSource = {
     title: string;
@@ -23,6 +24,7 @@ type FactCheckResult = {
     explanation: string;
     explanationDetails: string;
     sources: FactCheckSource[];
+    confidence: number; // 0-100 Prozent
     fakeTactic?: Array<{
         tactic: string;
         description: string;
@@ -72,22 +74,36 @@ export default defineEventHandler(async (event) => {
         }
     }
 
-    let result: any = {}
+    let result: FactCheckResult | any = {}
     if (lastDoneObj && lastDoneObj.response) {
         try {
-            result = JSON.parse(lastDoneObj.response)
+            result = JSON.parse(lastDoneObj.response) as FactCheckResult
             // Filtere Tone auf erlaubte Moods
             const allowedMoods: Mood[] = ['neutral', 'positiv', 'negativ', 'kritisch', 'sachlich', 'emotional', 'ironisch'];
             if (Array.isArray(result.tone)) {
                 result.tone = result.tone
                     .map((m: string) => m.toLowerCase())
                     .filter((m: string): m is Mood => allowedMoods.includes(m as Mood));
+            } else {
+                result.tone = ['neutral']; // Default, falls keine Tonalität geliefert wird
             }
             // Filtere textType auf erlaubte Werte
             const allowedTextTypes: TextType[] = ['Meinung', 'Aussage', 'Frage', 'Behauptung', 'Zitat'];
             if (typeof result.textType === 'string' && !allowedTextTypes.includes(result.textType)) {
                 result.textType = 'Aussage'; // Fallback
             }
+
+            // Bewertung der Sicherheit (confidence) heuristisch bestimmen
+            // Basis: Anzahl verifizierter Quellen, result, Tonalität
+            let confidence = 50;
+            if (result.result === 'Fakt' || result.result === 'Fake') confidence += 20;
+            if (Array.isArray(result.sources)) {
+                const verifiedCount = result.sources.filter((src: any) => src.verified).length;
+                confidence += Math.min(verifiedCount * 10, 30);
+            }
+            if (confidence > 100) confidence = 100;
+            if (confidence < 0) confidence = 0;
+            result.confidence = confidence;
 
             // 2. Quellen per HEAD- und GET-Request prüfen und Infos holen
             if (Array.isArray(result.sources)) {
