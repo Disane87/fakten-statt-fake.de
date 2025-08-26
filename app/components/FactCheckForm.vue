@@ -115,6 +115,33 @@
             </span>
           </div>
         </div>
+
+        <div v-if="result.sources?.length" class="space-y-3">
+          <div class="text-sm font-semibold text-muted-foreground">Quellen</div>
+          <ul class="space-y-2">
+            <li v-for="(src, i) in result.sources" :key="i"
+                class="flex items-center gap-3 rounded-lg border border-border bg-muted/40 p-3">
+              <img v-if="src.url" :src="getFavicon(src.url)" alt="" class="h-5 w-5 rounded-sm" />
+              <a :href="src.url" target="_blank" rel="noopener"
+                 class="font-medium text-card-foreground hover:underline flex-1">
+                {{ src.title }}
+              </a>
+              <span
+                v-if="src.verified"
+                class="inline-flex items-center gap-1 rounded-full text-[11px] font-bold px-2 py-0.5
+                       bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+              >✓ Verifiziert</span>
+              <span
+                v-else
+                class="inline-flex items-center gap-1 rounded-full text-[11px] font-bold px-2 py-0.5
+                       bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+              >! Nicht verifiziert</span>
+              <span v-if="src.verifyReason" class="text-[11px] text-muted-foreground">
+                ({{ src.verifyReason }})
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
 
     

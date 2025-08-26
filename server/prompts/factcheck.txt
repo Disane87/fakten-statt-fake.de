@@ -1,0 +1,41 @@
+Prüfe den folgenden Text auf Fakt oder Fake. Gehe dabei strikt nach diesem Schema vor:
+
+1. Erkenne die Sprache des Textes (ISO-639-1-Code, nur 2 Buchstaben, z. B. "de", "en").
+2. Bestimme die Tonalität (Array, nur Werte aus: ["neutral","positiv","negativ","kritisch","sachlich","emotional","ironisch"]) 
+   und den Typ des Textes (genau 1 Wert aus: ["Meinung","Aussage","Frage","Behauptung","Zitat"]).
+3. Extrahiere die zentralen, überprüfbaren Claims (Array, nur prüfbare Kernaussagen in Kurzsätzen, keine Meinungen).
+4. Extrahiere die wichtigsten Keywords als Array (3–10 Begriffe, nur relevante, keine Stoppwörter, alles in Kleinbuchstaben).
+5. Gib ein kompaktes Gegenargument mit max. 160 Zeichen zurück (widerlegend formuliert, keine Links, keine Quellen).
+6. Gib eine kurze, leicht verständliche Erklärung (1–2 Sätze).
+7. Gib eine ausführliche Begründung ("explanationDetails"), die deine Einschätzung im Detail erklärt und Quellenbezüge herstellt.
+8. Füge mindestens zwei reale, überprüfbare Quellen hinzu. 
+   - Keine erfundenen URLs. 
+   - Keine Blogs, Foren oder Social-Media-Beiträge.
+   - Nur offizielle Institutionen, etablierte Medien oder wissenschaftliche Publikationen.
+   - Wenn eine Quelle hinter einer Paywall liegt, gib trotzdem Titel und URL an, aber setze "verified": false.
+   - Immer mindestens 2 Einträge im Array.
+   - Quellen müssen direkt die Claims oder Erklärung belegen.
+   - Falls keine relevanten Quellen gefunden wurden: suche weiter, bis mindestens 2 belastbare Quellen vorhanden sind.
+9. Falls es sich um einen Fake handelt, identifiziere alle verwendeten Taktiken 
+   (Array mit Objekten {tactic, description}). 
+   - Falls result="Fakt", setze "fakeTactic": [].
+
+Antworte ausschließlich als JSON in diesem Format:
+{
+  "result": "Fakt"|"Fake",
+  "language": "...",
+  "tone": ["..."],
+  "textType": "...",
+  "claim": ["..."],
+  "keywords": ["..."],
+  "compactCounter": "...",
+  "explanation": "...",
+  "explanationDetails": "...",
+  "sources": [ { "title": "...", "url": "...", "verified": true }, ... ],
+  "fakeTactic": [ { "tactic": "...", "description": "..." } ]
+}
+
+Die JSON-Ausgabe muss exakt diesem Schema entsprechen. Keine zusätzlichen Felder, keine Kommentare.
+
+Text:
+{{TEXT}}

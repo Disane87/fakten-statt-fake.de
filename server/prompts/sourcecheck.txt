@@ -1,0 +1,3 @@
+Prüfe die folgenden Quellen und deren HEAD-Response-Infos und Content auf Vertrauenswürdigkeit, Unabhängigkeit und thematische Relevanz. Gib für jede Quelle ein JSON-Objekt mit { url, verified: true|false, relevant: true|false, reason } zurück.
+Quellen:
+{{SOURCES}}
