@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fakten statt Fakes — Mythos vs. Fakt</title>
+    <meta name="description"
+        content="Kurz, präzise, zitierfähig – so konterst du verbreitete Behauptungen. Inhalte als Karten, optional aus JSON renderbar." />
+    <meta property="og:title" content="Fakten statt Fakes — Mythos vs. Fakt" />
+    <meta property="og:description"
+        content="KI‑gestützte Faktenchecks für Social Media. Mythos vs. Fakt, Tags, Quellen, Permalinks." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Tailwind CDN (v3+; Utility-Set v4-kompatibel) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Nacht-UI ähnlich deinem Screenshot
+                        ink: '#0b1220', // page bg
+                        panel: '#0f172a', // card/nav
+                        mute: '#94a3b8', // subtile Texte
+                        brand: '#6366f1', // Indigo Accent
+                        accent: '#22c55e', // Green tags
+                    },
+                    borderRadius: {
+                        xl2: '1.25rem'
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Dark-mode: bevorzugte Einstellung + Persistenz
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+
+<body class="bg-white text-slate-900 dark:bg-ink dark:text-slate-100 antialiased">
+    <!-- Nav -->
+    <header class="sticky top-0 z-40
+               border-b border-slate-200/40 dark:border-white/10
+               bg-white/60 dark:bg-ink/60
+               backdrop-blur-md backdrop-saturate-150">
+        <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-full bg-brand/90 grid place-items-center font-semibold text-white">FS</div>
+                <a href="#" class="font-semibold">Fakten statt Fakes</a>
+            </div>
+
+            <ul class="hidden md:flex items-center gap-6 text-sm">
+                <li><a class="opacity-80 hover:opacity-100" href="#">Leitfaden</a></li>
+                <li><a class="opacity-80 hover:opacity-100" href="#">Faktenchecks</a></li>
+                <li><a class="opacity-80 hover:opacity-100" href="#">Werkzeuge</a></li>
+                <li><a class="opacity-80 hover:opacity-100" href="#">FAQ</a></li>
+            </ul>
+
+            <div class="flex items-center gap-3">
+                <button id="themeToggle"
+                    class="text-xs px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5">
+                    <span class="inline dark:hidden">Dark Mode</span>
+                    <span class="hidden dark:inline">Light Mode</span>
+                </button>
+                <a href="#check"
+                    class="hidden sm:inline-block text-sm font-semibold px-4 py-2 rounded-lg bg-brand text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400/60">
+                    Fakten prüfen
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero / Intro -->
+    <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Mythos vs. Fakt</h1>
+        <p class="mt-2 text-slate-600 dark:text-mute max-w-3xl">
+            Kurz, präzise, zitierfähig – so konterst du verbreitete Behauptungen. Inhalte werden als Karten gerendert
+            (optional aus JSON).
+        </p>
+
+        <!-- Suche + Tag-Filter -->
+        <div class="mt-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="relative flex-1">
+                <input id="search" type="search" placeholder="🔎 Suchen (Mythos, Fakt, Tags)…"
+                    class="w-full rounded-xl border border-slate-300/60 dark:border-white/10 bg-white dark:bg-panel px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand/40 placeholder:opacity-70" />
+            </div>
+            <div class="relative">
+                <select id="tagFilter"
+                    class="w-full md:w-56 rounded-xl border border-slate-300/60 dark:border-white/10 bg-white dark:bg-panel px-4 py-3 pr-9 focus:outline-none focus:ring-2 focus:ring-brand/40">
+                    <option>Alle Tags</option>
+                    <option>Selbstverteidigung</option>
+                    <option>Völkerrecht</option>
+                    <option>Kontext</option>
+                    <option>Grundrechte</option>
+                    <option>Rechtsstaat</option>
+                </select>
+                <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60">▾</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grid -->
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <div class="grid gap-6 md:gap-8 md:grid-cols-2">
+            <!-- Karte 1 -->
+            <article
+                class="overflow-hidden rounded-2xl bg-white dark:bg-panel border border-slate-200/60 dark:border-white/10 shadow-sm">
+                <img class="h-56 w-full object-cover"
+                    src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1600&auto=format&fit=crop"
+                    alt="Symbolbild Energie/Tech" />
+                <div class="p-6">
+                    <p class="text-xs tracking-widest text-slate-500 dark:text-mute">UKRAINE &amp; ENERGIE</p>
+                    <h3 class="mt-2 text-lg font-semibold">„Angriff auf Druschba = Angriff auf NATO (Ungarn)”</h3>
+                    <p class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        <span class="font-semibold">Fakt:</span> Getroffen wurden Pumpstationen in Russland. Ungarns
+                        Territorium blieb unangetastet.
+                        Selbstverteidigung nach Art. 51 UN‑Charta erlaubt Angriffe auf militärisch relevante
+                        Infrastruktur des Aggressors –
+                        Verhältnismäßigkeit vorausgesetzt.
+                    </p>
+
+                    <!-- Tags -->
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span
+                            class="inline-flex items-center rounded-full bg-accent/10 text-accent px-3 py-1 text-xs font-semibold ring-1 ring-accent/20">Selbstverteidigung</span>
+                        <span
+                            class="inline-flex items-center rounded-full bg-emerald-500/10 text-emerald-400 px-3 py-1 text-xs font-semibold ring-1 ring-emerald-400/25">Völkerrecht</span>
+                        <span
+                            class="inline-flex items-center rounded-full bg-sky-500/10 text-sky-400 px-3 py-1 text-xs font-semibold ring-1 ring-sky-400/25">Kontext</span>
+                    </div>
+
+                    <!-- Quellen -->
+                    <div class="mt-4 text-sm">
+                        <a class="underline decoration-slate-400/50 hover:text-brand" href="#" target="_blank"
+                            rel="noopener">UN‑Charta Art. 51</a>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 flex flex-wrap items-center gap-3 text-xs">
+                        <button
+                            class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-action="share">Karte teilen</button>
+                        <button
+                            class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-action="copy">Permalink kopieren</button>
+                        <a class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            href="#" target="_blank" rel="noopener">Auf GitHub bearbeiten</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Karte 2 -->
+            <article
+                class="overflow-hidden rounded-2xl bg-white dark:bg-panel border border-slate-200/60 dark:border-white/10 shadow-sm">
+                <img class="h-56 w-full object-cover"
+                    src="https://images.unsplash.com/photo-1585157603595-5f546fdc9b36?q=80&w=1600&auto=format&fit=crop"
+                    alt="Wahlurne" />
+                <div class="p-6">
+                    <p class="text-xs tracking-widest text-slate-500 dark:text-mute">MEINUNGSFREIHEIT</p>
+                    <h3 class="mt-2 text-lg font-semibold">„Man darf ja nichts mehr sagen”</h3>
+                    <p class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        <span class="font-semibold">Fakt:</span> Meinungsfreiheit garantiert Sagen dürfen – nicht
+                        Widerspruchsfreiheit.
+                        Strafbar sind z. B. Volksverhetzung, Beleidigung, Gewaltaufrufe. Widerspruch und Kritik sind
+                        Teil derselben Freiheit.
+                    </p>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span
+                            class="inline-flex items-center rounded-full bg-emerald-500/10 text-emerald-300 px-3 py-1 text-xs font-semibold ring-1 ring-emerald-400/25">Grundrechte</span>
+                        <span
+                            class="inline-flex items-center rounded-full bg-emerald-500/10 text-emerald-300 px-3 py-1 text-xs font-semibold ring-1 ring-emerald-400/25">Rechtsstaat</span>
+                    </div>
+
+                    <div class="mt-4 text-sm">
+                        <a class="underline decoration-slate-400/50 hover:text-brand" href="#" target="_blank"
+                            rel="noopener">GG Art. 5</a>
+                    </div>
+
+                    <div class="mt-6 flex flex-wrap items-center gap-3 text-xs">
+                        <button
+                            class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-action="share">Karte teilen</button>
+                        <button
+                            class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            data-action="copy">Permalink kopieren</button>
+                        <a class="px-3 py-2 rounded-lg border border-slate-300/60 dark:border-white/15 hover:bg-slate-50 dark:hover:bg-white/5"
+                            href="#" target="_blank" rel="noopener">Auf GitHub bearbeiten</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200/60 dark:border-white/10">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-slate-600 dark:text-mute">
+            © <span id="year"></span> Fakten statt Fakes · Gemeinsam gegen Desinformation
+        </div>
+    </footer>
+
+    <!-- Mini JS (Dark-Mode, Share/Copy, Jahr) -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        document.getElementById('themeToggle')?.addEventListener('click', () => {
+            const el = document.documentElement;
+            const dark = el.classList.toggle('dark');
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+        });
+
+        const onShare = async (permalink) => {
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Fakten statt Fakes', url: permalink }); }
+                catch { }
+            } else {
+                await navigator.clipboard.writeText(permalink);
+                alert('Permalink in die Zwischenablage kopiert.');
+            }
+        };
+
+        document.querySelectorAll('[data-action="share"]').forEach(btn => {
+            btn.addEventListener('click', () => onShare(location.href + '#card'));
+        });
+
+        document.querySelectorAll('[data-action="copy"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                await navigator.clipboard.writeText(location.href + '#card');
+                btn.textContent = 'Kopiert ✓';
+                setTimeout(() => (btn.textContent = 'Permalink kopieren'), 1200);
+            });
+        });
+    </script>
+</body>
+
+</html>

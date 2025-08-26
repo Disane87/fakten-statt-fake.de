@@ -1,0 +1,99 @@
+@import "tailwindcss";
+@import "flag-icons/css/flag-icons.min.css";
+
+/* Design-Tokens (Light-Default) */
+@theme {
+    /* Fonts optional: */
+    --font-sans: ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+
+    /* Brand */
+    --color-brand: #6366f1;
+    /* Indigo 500 */
+    --color-brand-600: #5458e5;
+    --color-accent: #22c55e;
+    /* Emerald 500 */
+
+    /* Base surfaces (LIGHT) */
+    --color-background: #f8fafc;
+    /* Slate 50 */
+    --color-panel: #ffffff;
+    /* Cards/Nav */
+    --color-muted: #f1f5f9;
+    /* Subtle surfaces */
+    --color-border: #e5e7eb;
+    /* Gray-200 */
+
+    /* Text (LIGHT) */
+    --color-ink: #0b1220;
+    /* Main text */
+    --color-card-foreground: #111827;
+    /* Gray-900 */
+    --color-muted-foreground: #475569;
+    /* Slate-600 */
+
+    /* Semantic (LIGHT) */
+    --color-success: #16a34a;
+    /* Green-600 */
+    --color-success-foreground: #052e16;
+    /* Green-950 */
+    --color-error: #ef4444;
+    /* Red-500 */
+    --color-error-foreground: #450a0a;
+    /* Red-950 */
+    --color-warning: #f59e0b;
+    /* Amber-500 */
+    --color-warning-foreground: #78350f;
+    /* Amber-950 */
+    --color-info: #0ea5e9;
+    /* Sky-500 */
+    --color-info-foreground: #083344;
+    /* Sky-950 */
+}
+
+@layer theme {
+    .dark {
+        /* Fonts optional: */
+        --font-sans: ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+
+        /* Brand */
+        --color-brand: #6366f1;
+        --color-brand-600: #5458e5;
+        --color-accent: #22c55e;
+
+        /* Base surfaces (DARK) */
+        --color-background: #0b1220;
+        /* Sehr dunkles Blau/Schwarz */
+        --color-panel: #1a1a2e;
+        /* Cards/Nav dunkel */
+        --color-muted: #232946;
+        /* Subtle surfaces dunkel */
+        --color-border: #2d334a;
+        /* Gray-800 */
+
+        /* Text (DARK) */
+        --color-ink: #f8fafc;
+        /* Main text hell */
+        --color-card-foreground: #f8fafc;
+        /* Gray-50 */
+        --color-muted-foreground: #a1a1aa;
+        /* Slate-400 */
+
+        /* Semantic (DARK) */
+        --color-success: #22c55e;
+        /* Green-500 */
+        --color-success-foreground: #f0fdf4;
+        /* Green-50 */
+        --color-error: #ef4444;
+        /* Red-500 */
+        --color-error-foreground: #fef2f2;
+        /* Red-50 */
+        --color-warning: #f59e0b;
+        /* Amber-500 */
+        --color-warning-foreground: #fef6e7;
+        /* Amber-50 */
+        --color-info: #0ea5e9;
+        /* Sky-500 */
+        --color-info-foreground: #e0f2fe;
+        /* Sky-50 */
+    }
+}
