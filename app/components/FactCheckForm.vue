@@ -117,18 +117,7 @@
         </div>
       </div>
 
-      <!-- Statuszeile -->
-      <div class="flex items-center justify-between">
-        <div>
-          <span v-if="result.result === 'Fakt'" class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-semibold border
-                     bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">✅ Fakt</span>
-          <span v-else-if="result.result === 'Fake'" class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-semibold border
-                     bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20">❌ Fake</span>
-          <span v-else class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-base font-semibold border
-                     bg-muted text-muted-foreground border-border">❓ Unbekannt</span>
-        </div>
-
-      </div>
+    
     </div>
   </div>
   <!-- /Ergebnis -->
