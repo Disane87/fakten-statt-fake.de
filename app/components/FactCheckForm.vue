@@ -121,6 +121,18 @@
           </div>
         </div>
 
+        <!-- Keywords -->
+        <div v-if="Array.isArray(result.keywords) && result.keywords.length" class="space-y-2">
+          <div class="text-sm font-semibold text-muted-foreground">Keywords</div>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="(kw,idx) in result.keywords" :key="idx"
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold border bg-muted text-muted-foreground border-border">
+              {{ kw }}
+            </span>
+          </div>
+        </div>
+        </div>
+
         <!-- Quellen -->
         <div v-if="result.sources?.length" class="space-y-3">
           <div class="text-sm font-semibold text-muted-foreground">Quellen</div>
@@ -151,7 +163,7 @@
       </div>
     </div>
     <!-- /Ergebnis -->
-  </div>
+  
 </template>
 
 <script setup lang="ts">

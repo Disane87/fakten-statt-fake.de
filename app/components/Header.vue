@@ -32,10 +32,26 @@
 
 <script setup lang="ts">
 
+import { ref, onMounted } from 'vue'
 const colorMode = useColorMode()
 
+const systemIsDark = ref(false)
+
+onMounted(() => {
+    // System-Mode erkennen
+    systemIsDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+})
+
 function toggleDark() {
-    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    if (colorMode.preference === 'system') {
+        colorMode.preference = systemIsDark.value ? 'light' : 'dark'
+    } else {
+        colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+}
+
+function setSystem() {
+    colorMode.preference = 'system'
 }
 </script>
 
