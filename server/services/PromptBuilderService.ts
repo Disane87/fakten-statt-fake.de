@@ -1,27 +1,32 @@
-Example for German input:
-Input: "Deutschland ist cool."
-Output:
-{
-   "result": "unknown",
-   "language": "de",
-   "tone": ["positive"],
-   "textType": "statement",
-   "claim": ["Deutschland ist cool."],
-   "keywords": ["deutschland", "cool"],
-   "compactCounter": "Die Aussage ist eine subjektive Meinung und drückt eine positive Einstellung zu Deutschland aus.",
-   "explanation": "Der Text drückt ein persönliches Gefühl oder eine Vorliebe für Deutschland aus.",
-   "explanationDetails": "Der Text ist eine einfache Meinungsäußerung ohne überprüfbare Fakten.",
-   "sources": [
-      { "title": "Visit Germany - Offizielle Tourismus-Website", "url": "https://www.germany.travel/", "verified": true },
-      { "title": "Germany - Wikipedia", "url": "https://de.wikipedia.org/wiki/Deutschland", "verified": true }
-   ],
-   "fakeTactic": []
-}
-Check the following text for fact or fake. Follow this schema strictly:
+import { createClient } from '@supabase/supabase-js'
+
+export class PromptBuilderService {
+    private supabase: any
+    constructor(url: string, key: string) {
+        this.supabase = createClient(url, key)
+    }
+    async getEnumValues(table: string): Promise<string[]> {
+        const { data, error } = await this.supabase.from(table).select('value')
+        if (data && Array.isArray(data)) {
+            return data.map((row: any) => row.value)
+        }
+        return []
+    }
+    async buildFactCheckPrompt(text: string): Promise<string> {
+        const toneValues = await this.getEnumValues('factcheck_tone')
+        const textTypeValues = await this.getEnumValues('factcheck_texttype')
+        // Weitere Schlüsselwerte prüfen
+        // result: fact|fake (fix)
+        // language: ISO-639-1 (fix)
+        // fakeTactic: tactic, description (frei)
+        // sources: title, url, verified (frei)
+        // claim, keywords, compactCounter, explanation, explanationDetails (frei)
+        // Prompt dynamisch aufbauen:
+        return `Check the following text for fact or fake. Follow this schema strictly:
 
 1. Detect the language of the text (ISO-639-1 code, only 2 letters, e.g. "en", "de").
-2. Determine the tone (array, only values from: {{TONE_ENUMS}})
-   and the type of the text (exactly 1 value from: {{TEXTTYPE_ENUMS}}).
+2. Determine the tone (array, only values from: [${toneValues.map(v => '"' + v + '"').join(',')}])
+   and the type of the text (exactly 1 value from: [${textTypeValues.map(v => '"' + v + '"').join(',')}]).
 3. Extract the central, verifiable claims (array, only verifiable core statements in short sentences, no opinions).
 4. Extract the most important keywords as an array (3–10 terms, only relevant, no stopwords, all lowercase).
 5. Return a compact counter-argument with max. 160 characters (formulated to refute, no links, no sources).
@@ -56,7 +61,9 @@ Reply strictly as JSON in this format:
 
 The JSON output must match this schema exactly. No extra fields, no comments.
 
-Important: Always reply with all property names, keys and fixed values in English. For all dynamic texts (explanation, compactCounter, claims, etc.), always use the detected language of the input text. Example: If the input is in German, all explanations, counterarguments and claims must be in German. Only property names, keys and fixed values (like tone, textType, etc.) must be in English.
+Important: Always reply with all property values and texts in English, regardless of the input language.
 
 Text:
-{{TEXT}}
+${text}`
+    }
+}

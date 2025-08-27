@@ -12,7 +12,7 @@ export default {
   ],
   theme: {
     extend: {
-      // Farben werden in main.css als CSS-Variablen gepflegt
+      // Colors are maintained as CSS variables in main.css
       borderRadius: {
         xl2: '1.25rem',
       },

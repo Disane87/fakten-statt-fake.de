@@ -9,13 +9,13 @@ export class FactCheckService {
         this.sourceVerifier = new SourceVerifier()
     }
     async process(keywords: string[], initialSources: any[]): Promise<any[]> {
-        // NewsAPI-Suche
+        // NewsAPI search
         const newsSources = await this.newsService.searchNews(keywords)
-        // Kombiniere initiale und gefundene Quellen
+        // Combine initial and found sources
         const allSources = [...initialSources, ...newsSources].filter((v, i, a) => a.findIndex(t => t.url === v.url) === i)
-        // Prüfe Quellen
+        // Check sources
         const checkedSources = await this.sourceVerifier.verifySources(allSources)
-        // LLM-Check
+        // LLM check
         const verifiedSources = await this.sourceVerifier.llmCheck(checkedSources)
         return verifiedSources
     }

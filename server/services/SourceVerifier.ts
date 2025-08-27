@@ -3,14 +3,14 @@ import fs from 'fs/promises'
 
 export class SourceVerifier {
     async verifySources(sources: any[]): Promise<any[]> {
-        // Technische Prüfung: Fehlerhafte Quellen direkt ausschließen
+        // Technical check: exclude faulty sources directly
         const checked: any[] = []
         for (const src of sources) {
             try {
                 const head = await $fetch(src.url, { method: 'HEAD' })
                 src.headInfo = head
                 const page = await $fetch(src.url, { method: 'GET', responseType: 'text' })
-                // src.pageContent = page // Niemals an das Frontend zurückgeben
+                // src.pageContent = page // Never return to frontend
                 if (typeof page === 'string' && (
                     page.includes('No Results Found') ||
                     page.includes('404') ||
@@ -27,12 +27,12 @@ export class SourceVerifier {
             }
             if (src.relevant) checked.push(src)
         }
-        // KI-Prüfung: Relevanzscore für jede Quelle berechnen
+        // AI check: calculate relevance score for each source
         if (checked.length === 0) return []
         const fs = await import('fs/promises')
         const promptRaw = await fs.readFile('server/prompts/sourcecheck.txt', 'utf8')
-        // Prompt für Score: Jede Quelle einzeln prüfen
-        const prompt = promptRaw + '\nBitte bewerte jede Quelle mit einem Relevanzscore von 0 bis 100. Format: [{"url":"...","title":"...","score":...}]'
+        // Prompt for score: check each source individually
+        const prompt = promptRaw + '\nPlease rate each source with a relevance score from 0 to 100. Format: [{"url":"...","title":"...","score":...}]'
         const sourcesForCheck = checked.map((s: any) => ({ title: s.title, url: s.url }))
         const recheckPrompt = prompt.replace('{{SOURCES}}', JSON.stringify(sourcesForCheck))
         const recheckResponse = await $fetch('http://localhost:11434/api/generate', {
@@ -53,7 +53,7 @@ export class SourceVerifier {
                 if (Array.isArray(obj)) recheckResult = obj
             } catch (e) { }
         }
-        // Score auswerten und Quellen filtern
+        // Evaluate score and filter sources
         const threshold = 60
         if (Array.isArray(recheckResult)) {
             for (const src of checked) {

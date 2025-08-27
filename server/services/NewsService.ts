@@ -38,7 +38,7 @@ export class NewsService {
                 }
             } catch { }
         }
-        // Nur relevante Quellen zurückgeben
+        // Only return relevant sources
         return articles.filter(a => a.relevant)
     }
 }

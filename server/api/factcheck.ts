@@ -1,3 +1,4 @@
+import { $fetch } from 'ofetch'
 import { FactCheckService } from '../services/FactCheckService'
 import { OllamaService } from '../services/OllamaService'
 import { ClaimStoreService } from '../services/ClaimStoreService'
@@ -6,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { text } = body
     if (!text || typeof text !== 'string' || !text.trim()) {
-        return { error: 'Kein Text angegeben.' }
+        return { error: 'No text provided.' }
     }
 
     // Supabase-Client initialisieren
@@ -14,12 +15,28 @@ export default defineEventHandler(async (event) => {
     // Prüfe, ob die Aussage (oder eine ähnliche) schon existiert
     const cached = await claimStore.findSimilarClaim(text)
     if (cached && cached.result) {
-        console.log('Claim aus DB:', cached)
+        // Falls im Cache: Wenn als 'statement' klassifiziert, direkt passende Antwort
+        if (cached.result.textType === 'statement') {
+            return {
+                status: 'info',
+                message: 'This is a general statement and will not be checked as fact or fake.',
+                result: cached.result
+            }
+        }
         return cached.result
     }
     // 1. Initiale KI-Prüfung und Keywords/Sources holen über OllamaService
     const ollamaService = new OllamaService('gemma3:4b')
     let result: any = await ollamaService.generateFactCheck(text)
+    // Falls die KI die Aussage als 'statement' klassifiziert, nicht weiter prüfen
+    if (result && result.textType === 'statement') {
+        await claimStore.saveClaim(text, result)
+        return {
+            status: 'info',
+            message: 'This is a general statement and will not be checked as fact or fake.',
+            result
+        }
+    }
     if (result && result.sources) {
         // Service für NewsAPI/Quellenprüfung
         const factCheckService = new FactCheckService(process.env.NEWSAPI_KEY || '')
