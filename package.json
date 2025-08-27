@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --inspect",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -12,6 +12,7 @@
   "dependencies": {
     "@iconify/vue": "^5.0.0",
     "@nuxtjs/color-mode": "3.5.2",
+    "@nuxtjs/supabase": "1.6.1",
     "@tailwindcss/postcss": "^4.1.12",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "supabase": "^2.39.2",
     "tailwindcss": "^4.0.0"
   }
 }

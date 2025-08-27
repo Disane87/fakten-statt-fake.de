@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "moduleResolution": "bundler",
+        "module": "ESNext",
+        "verbatimModuleSyntax": true,
+        "forceConsistentCasingInFileNames": true,
+        "types": [
+            "nuxt",
+            "nitropack",
+            "@types/node"
+        ]
+    },
+    "include": [
+        "app.vue",
+        "nuxt.config.ts",
+        "server/**/*.ts",
+        "components/**/*.vue",
+        "composables/**/*.ts",
+        "plugins/**/*.ts",
+        "pages/**/*.vue",
+        "layouts/**/*.vue",
+        "middleware/**/*.ts",
+        "utils/**/*.ts",
+        "types/**/*.d.ts",
+        ".nuxt/types/**/*.d.ts", // <- explizit aufnehmen
+        ".nuxt/**/*.d.ts"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
+}

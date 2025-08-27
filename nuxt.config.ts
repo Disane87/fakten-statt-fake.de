@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     ],
   },
 
-  modules: ['@nuxtjs/color-mode'],
+  modules: ['@nuxtjs/color-mode', '@nuxtjs/supabase'],
 
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
