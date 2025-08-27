@@ -2,6 +2,13 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Start Supabase Local",
+			"type": "shell",
+			"command": "npx supabase start",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
 			"label": "Nuxt Dev Server",
 			"type": "shell",
 			"command": "pnpm",

@@ -1,16 +1,16 @@
 {
-  "recommendations": [
-    "nuxt.nuxt-vscode-extension",
-    "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
-    "Vue.volar",
-    "ms-vscode.vscode-typescript-next",
-    "GitHub.copilot",
-    "ms-azuretools.vscode-docker",
-    "mechatroner.rainbow-csv",
-    "formulahendry.auto-rename-tag",
-    "aaron-bond.better-comments",
-    "supabase.supabase-vscode",
-    "bradlc.vscode-tailwindcss"
-  ]
+    "recommendations": [
+        "nuxt.nuxt-vscode-extension",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "Vue.volar",
+        "ms-vscode.vscode-typescript-next",
+        "GitHub.copilot",
+        "ms-azuretools.vscode-docker",
+        "mechatroner.rainbow-csv",
+        "formulahendry.auto-rename-tag",
+        "aaron-bond.better-comments",
+        "supabase.supabase-vscode",
+        "bradlc.vscode-tailwindcss"
+    ]
 }

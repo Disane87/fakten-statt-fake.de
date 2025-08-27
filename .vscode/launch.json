@@ -15,7 +15,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "preLaunchTask": "Start Supabase Local"
         },
         {
             "type": "msedge",
