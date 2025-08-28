@@ -4,16 +4,18 @@ import type { Database } from '../types/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export class SupabaseService {
-    public client: Promise<SupabaseClient<Database>>;
+    private event: any;
     constructor(event: any) {
-        this.client = serverSupabaseClient<Database>(event);
+        this.event = event;
+    }
+    private async getClient(): Promise<SupabaseClient<Database>> {
+        return await serverSupabaseClient<Database>(this.event);
     }
     getHash(text: string): string {
         return crypto.createHash('sha256').update(text.trim().toLowerCase()).digest('hex')
     }
     async findSimilarClaim(text: string): Promise<any | null> {
-        const client = await this.client
-
+        const client = await this.getClient();
         const { data: similar, error } = await client.rpc('find_similar_claim', { input_text: text })
         if (error) {
             console.error('Supabase RPC error find_similar_claim:', error)
@@ -23,10 +25,7 @@ export class SupabaseService {
         return null
     }
     async saveClaim(text: string, result: any, promptId?: number | string | null): Promise<void> {
-        const hash = this.getHash(text)
-        const client = await this.client
-
-        // Convert incoming promptId to numeric prompt_id (project uses serial PKs)
+        const client = await this.getClient();
         let prompt_id_value: number | null = null
         if (promptId !== undefined && promptId !== null) {
             if (typeof promptId === 'number' && Number.isInteger(promptId)) {
@@ -38,12 +37,10 @@ export class SupabaseService {
                 if (typeof v === 'number' && Number.isInteger(v)) prompt_id_value = v
                 else if (typeof v === 'string' && /^\d+$/.test(v)) prompt_id_value = parseInt(v, 10)
             } else {
-                // Non-numeric value provided -> null to avoid FK type error
                 console.warn('Non-numeric promptId provided, storing null to avoid FK type error', { promptId })
                 prompt_id_value = null
             }
         }
-
         const insertObj: any = { hash: this.getHash(text), text, result, prompt_id: prompt_id_value }
         console.debug('Inserting claim into DB:', { insertObj, promptIdType: typeof promptId, promptIdValue: prompt_id_value })
         const { data: insertData, error } = await client.from('claims').insert(insertObj).select()
@@ -52,13 +49,12 @@ export class SupabaseService {
                 error,
                 insertObj,
             })
-            // include Supabase error details in the response for debugging (no secrets expected)
             throw createError({ statusCode: 500, statusMessage: `Error saving claim: ${error.message || JSON.stringify(error)}; details: ${JSON.stringify(error.details || error)}` })
         }
         console.debug('Insert successful, returned rows:', insertData)
     }
     async getEnumValues(table: 'claims' | 'prompts' | 'factcheck_texttype' | 'factcheck_tone'): Promise<string[]> {
-        const client = await this.client
+        const client = await this.getClient();
         const { data, error } = await client.from(table).select('value')
         if (error) {
             console.error('Supabase error getEnumValues:', { table, error })
@@ -70,7 +66,7 @@ export class SupabaseService {
         return []
     }
     async getLatestPrompt(name: string): Promise<{ content: string | null, id: number | null }> {
-        const client = await this.client
+        const client = await this.getClient();
         const { data, error } = await client
             .from('prompts')
             .select('content, id')

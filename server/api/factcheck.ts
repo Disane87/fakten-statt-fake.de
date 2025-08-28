@@ -32,14 +32,14 @@ export default defineEventHandler(async (event) => {
     if (!result || !promptId) {
         return Error('Failed to generate a valid response from the AI.')
     }
-    if (result && result.textType === 'statement') {
-        await claimStore.saveClaim(text, result, promptId)
-        return {
-            status: 'info',
-            message: 'This is a general statement and will not be checked as fact or fake.',
-            result
-        }
-    }
+    // if (result && result.textType === 'statement') {
+    //     await claimStore.saveClaim(text, result, promptId)
+    //     return {
+    //         status: 'info',
+    //         message: 'This is a general statement and will not be checked as fact or fake.',
+    //         result
+    //     }
+    // }
     if (result && result.sources) {
         // Service für NewsAPI/Quellenprüfung
         const factCheckService = new FactCheckService(process.env.NEWSAPI_KEY || '', event)

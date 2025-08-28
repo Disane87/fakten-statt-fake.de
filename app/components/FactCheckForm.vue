@@ -188,7 +188,7 @@ async function checkFact() {
       body: JSON.stringify({ text: text.value })
     })
     const apiResponse: FactCheckApiResponse = await res.json()
-    result.value = apiResponse.result
+    result.value = apiResponse
   } catch {
     result.value = null
   } finally {

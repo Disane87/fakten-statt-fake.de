@@ -1,3 +1,0 @@
-Check the following sources and their HEAD response info and content for trustworthiness, independence, and thematic relevance. For each source, return a JSON object with { url, verified: true|false, relevant: true|false, reason }.
-Sources:
-{{SOURCES}}

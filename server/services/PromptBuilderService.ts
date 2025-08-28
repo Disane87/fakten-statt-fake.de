@@ -22,11 +22,12 @@ export class PromptBuilderService {
         if (promptTemplateRaw) {
             prompt = promptTemplateRaw
                 .replace('{{TONE_ENUMS}}', toneValues.join(', '))
-                .replace('{{TEXTTYPE_ENUMS}}', textTypeValues.join(', '));
+                .replace('{{TEXTTYPE_ENUMS}}', textTypeValues.join(', '))
+                .replace('{{TEXT}}', text);
         } else {
             prompt = null;
         }
 
-    return { prompt, promptId };
+        return { prompt, promptId };
     }
 }
