@@ -1,15 +1,24 @@
 import { $fetch } from 'ofetch'
-import fs from 'fs/promises'
+import { PromptBuilderService } from './PromptBuilderService'
 
 export class OllamaService {
     model: string
-    constructor(model: string = 'gemma3:4b') {
-        this.model = model
+    ollamaUrl: string
+    promptBuilder: PromptBuilderService
+    constructor(event?: any, model?: string, ollamaUrl?: string) {
+        this.model = model || process.env.OLLAMA_MODEL || 'gemma3:4b'
+        this.ollamaUrl = ollamaUrl || process.env.OLLAMA_URL || 'http://localhost:11434/api/generate'
+        this.promptBuilder = new PromptBuilderService(event)
     }
-    async generateFactCheck(text: string): Promise<any> {
-        let prompt = await fs.readFile('server/prompts/factcheck.txt', 'utf8')
-        prompt = prompt.replace('{{TEXT}}', text)
-        const response = await $fetch('http://localhost:11434/api/generate', {
+    async generateFactCheck(text: string): Promise<{ result: any, promptId: number | null }> {
+        const { prompt, promptId } = await this.promptBuilder.buildFactCheckPrompt(text);
+        if (!prompt || !promptId) {
+            throw createError({
+                statusCode: 400,
+                statusMessage: 'Missing required "prompt" or "id" parameter',
+            })
+        }
+        const response = await $fetch(this.ollamaUrl, {
             method: 'POST',
             body: {
                 model: this.model,
@@ -28,14 +37,16 @@ export class OllamaService {
                 if (obj.done) lastDoneObj = obj
             } catch { }
         }
+        let result: any
         if (lastDoneObj && lastDoneObj.response) {
             try {
-                return JSON.parse(lastDoneObj.response)
+                result = JSON.parse(lastDoneObj.response)
             } catch (e) {
-                return { response: lastDoneObj.response }
+                result = { response: lastDoneObj.response }
             }
         } else {
-            return { error: 'Kein done-Objekt im Stream gefunden', raw: lines }
+            result = { error: 'Kein done-Objekt im Stream gefunden', raw: lines }
         }
+        return { result, promptId }
     }
 }

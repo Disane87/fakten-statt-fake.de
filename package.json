@@ -13,6 +13,7 @@
     "@iconify/vue": "^5.0.0",
     "@nuxtjs/color-mode": "3.5.2",
     "@nuxtjs/supabase": "1.6.1",
+    "@supabase/supabase-js": "^2.56.0",
     "@tailwindcss/postcss": "^4.1.12",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",

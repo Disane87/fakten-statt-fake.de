@@ -4,5 +4,7 @@ CREATE TABLE IF NOT EXISTS claims (
   hash text UNIQUE,
   text text,
   result jsonb,
-  created_at timestamptz DEFAULT now()
+  created_at timestamptz DEFAULT now(),
+  prompt_id integer REFERENCES prompts(id) ON DELETE SET NULL
+
 );

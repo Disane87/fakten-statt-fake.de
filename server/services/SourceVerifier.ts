@@ -1,7 +1,11 @@
 import { $fetch } from 'ofetch'
-import fs from 'fs/promises'
+import { PromptBuilderService } from './PromptBuilderService'
 
 export class SourceVerifier {
+    promptBuilder: PromptBuilderService
+    constructor(event?: any) {
+        this.promptBuilder = new PromptBuilderService(event)
+    }
     async verifySources(sources: any[]): Promise<any[]> {
         // Technical check: exclude faulty sources directly
         const checked: any[] = []
@@ -29,10 +33,9 @@ export class SourceVerifier {
         }
         // AI check: calculate relevance score for each source
         if (checked.length === 0) return []
-        const fs = await import('fs/promises')
-        const promptRaw = await fs.readFile('server/prompts/sourcecheck.txt', 'utf8')
-        // Prompt for score: check each source individually
-        const prompt = promptRaw + '\nPlease rate each source with a relevance score from 0 to 100. Format: [{"url":"...","title":"...","score":...}]'
+        // Prompt aus DB holen
+        const promptRaw = await this.promptBuilder.getLatestPrompt('sourcecheck')
+        const prompt = (promptRaw || '') + '\nPlease rate each source with a relevance score from 0 to 100. Format: [{"url":"...","title":"...","score":...}]'
         const sourcesForCheck = checked.map((s: any) => ({ title: s.title, url: s.url }))
         const recheckPrompt = prompt.replace('{{SOURCES}}', JSON.stringify(sourcesForCheck))
         const recheckResponse = await $fetch('http://localhost:11434/api/generate', {
@@ -68,8 +71,11 @@ export class SourceVerifier {
     }
 
     async llmCheck(sources: any[]): Promise<any[]> {
-        const sourcePromptRaw = await fs.readFile('server/prompts/sourcecheck.txt', 'utf8')
-        const recheckPrompt = sourcePromptRaw.replace('{{SOURCES}}', JSON.stringify(sources.map((s: any) => ({ title: s.title, url: s.url, headInfo: s.headInfo, relevant: s.relevant }))))
+        // Prompt aus DB holen
+        const sourcePromptRaw = await this.promptBuilder.getLatestPrompt('sourcecheck')
+        const promptContent = sourcePromptRaw?.content || ''
+        const recheckPrompt = promptContent.replace('{{SOURCES}}', JSON.stringify(sources.map((s: any) => ({ title: s.title, url: s.url, headInfo: s.headInfo, relevant: s.relevant }))
+        ))
         const recheckResponse = await $fetch('http://localhost:11434/api/generate', {
             method: 'POST',
             body: {

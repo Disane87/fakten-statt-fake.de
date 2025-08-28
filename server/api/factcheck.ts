@@ -10,8 +10,8 @@ export default defineEventHandler(async (event) => {
         return { error: 'No text provided.' }
     }
 
-    // Supabase-Client initialisieren
-    const claimStore = new ClaimStoreService(process.env.SUPABASE_URL || '', process.env.SUPABASE_KEY || '')
+    // Supabase-Client initialisieren (event weitergeben)
+    const claimStore = new ClaimStoreService(event)
     // Prüfe, ob die Aussage (oder eine ähnliche) schon existiert
     const cached = await claimStore.findSimilarClaim(text)
     if (cached && cached.result) {
@@ -26,11 +26,14 @@ export default defineEventHandler(async (event) => {
         return cached.result
     }
     // 1. Initiale KI-Prüfung und Keywords/Sources holen über OllamaService
-    const ollamaService = new OllamaService('gemma3:4b')
-    let result: any = await ollamaService.generateFactCheck(text)
+    const ollamaService = new OllamaService(event, 'gemma3:4b')
+    let { result, promptId } = await ollamaService.generateFactCheck(text)
     // Falls die KI die Aussage als 'statement' klassifiziert, nicht weiter prüfen
+    if (!result || !promptId) {
+        return Error('Failed to generate a valid response from the AI.')
+    }
     if (result && result.textType === 'statement') {
-        await claimStore.saveClaim(text, result)
+        await claimStore.saveClaim(text, result, promptId)
         return {
             status: 'info',
             message: 'This is a general statement and will not be checked as fact or fake.',
@@ -39,7 +42,7 @@ export default defineEventHandler(async (event) => {
     }
     if (result && result.sources) {
         // Service für NewsAPI/Quellenprüfung
-        const factCheckService = new FactCheckService(process.env.NEWSAPI_KEY || '')
+        const factCheckService = new FactCheckService(process.env.NEWSAPI_KEY || '', event)
         // Entferne pageContent aus allen Quellen
         result.sources = result.sources.map((src: any) => {
             const { pageContent, ...meta } = src
@@ -47,7 +50,7 @@ export default defineEventHandler(async (event) => {
         })
     }
     // Speichere die Aussage und das Ergebnis in Supabase
-    await claimStore.saveClaim(text, result)
+    await claimStore.saveClaim(text, result, promptId)
     console.log('Factcheck result:', result)
     return result
 })
