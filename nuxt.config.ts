@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
+  runtimeConfig: {
+    factcheckApiKey: process.env.FACTCHECK_API_KEY
+  },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 

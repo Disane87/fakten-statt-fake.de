@@ -14,17 +14,17 @@ export default defineEventHandler(async (event) => {
     const claimStore = new ClaimStoreService(event)
     // Prüfe, ob die Aussage (oder eine ähnliche) schon existiert
     const cached = await claimStore.findSimilarClaim(text)
-    if (cached && cached.result) {
-        // Falls im Cache: Wenn als 'statement' klassifiziert, direkt passende Antwort
-        if (cached.result.textType === 'statement') {
-            return {
-                status: 'info',
-                message: 'This is a general statement and will not be checked as fact or fake.',
-                result: cached.result
-            }
-        }
-        return cached.result
-    }
+    // if (cached && cached.result) {
+    //     // Falls im Cache: Wenn als 'statement' klassifiziert, direkt passende Antwort
+    //     if (cached.result.textType === 'statement') {
+    //         return {
+    //             status: 'info',
+    //             message: 'This is a general statement and will not be checked as fact or fake.',
+    //             result: cached.result
+    //         }
+    //     }
+    //     return cached.result
+    // }
     // 1. Initiale KI-Prüfung und Keywords/Sources holen über OllamaService
     const ollamaService = new OllamaService(event, 'gemma3:4b')
     let { result, promptId } = await ollamaService.generateFactCheck(text)
