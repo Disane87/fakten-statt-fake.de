@@ -1,7 +1,7 @@
 import { $fetch } from 'ofetch'
-import { FactCheckService } from '../services/FactCheckService'
-import { OllamaService } from '../services/OllamaService'
-import { ClaimStoreService } from '../services/ClaimStoreService'
+import { FactCheckService } from '../../services/FactCheckService'
+import { OllamaService } from '../../services/OllamaService'
+import { ClaimStoreService } from '../../services/ClaimStoreService'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)

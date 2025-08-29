@@ -88,7 +88,7 @@ async function checkFact() {
   loading.value = true
   result.value = null
   try {
-    const res = await fetch('/api/factcheck', {
+    const res = await fetch('/api/fact/check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: text.value })
