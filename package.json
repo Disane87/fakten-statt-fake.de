@@ -21,6 +21,7 @@
     "flag-icons": "^7.5.0",
     "lucide-vue-next": "^0.541.0",
     "nuxt": "^4.0.3",
+    "nuxt-openapi-docs-module": "5.3.2",
     "radix-vue": "^1.9.17",
     "shadcn-vue": "^2.2.0",
     "tailwind-merge": "^3.3.1",

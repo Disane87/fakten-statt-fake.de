@@ -5,16 +5,26 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'query required' })
   }
 
-  const { factcheckApiKey } = useRuntimeConfig()
-  if (!factcheckApiKey) {
-    throw createError({ statusCode: 500, statusMessage: 'FACTCHECK_API_KEY not set' })
-  }
-
-  const url = `https://factchecktools.googleapis.com/v1alpha1/claims:search?key=${encodeURIComponent(factcheckApiKey)}&query=${encodeURIComponent(body.query)}&languageCode=${body.language ?? 'de'}`
-
-  const res = await $fetch(url).catch((e) => {
-    throw createError({ statusCode: 502, statusMessage: `FactCheck API error: ${e.message}` })
-  })
+  const res = await searchFactCheckClaims(body.query, body.language);
 
   return res
 })
+async function searchFactCheckClaims(query: string, language?: string) {
+  const { factcheckApiKey } = useRuntimeConfig();
+  if (!factcheckApiKey) {
+    throw createError({ statusCode: 500, statusMessage: 'FACTCHECK_API_KEY not set' });
+  }
+
+  const res = await $fetch('https://factchecktools.googleapis.com/v1alpha1/claims:search', {
+    method: 'GET',
+    params: {
+      key: factcheckApiKey,
+      query,
+      languageCode: language ?? 'de',
+    },
+  }).catch((e) => {
+    throw createError({ statusCode: 502, statusMessage: `FactCheck API error: ${e.message}` });
+  });
+  return res;
+}
+
