@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 
-type ResultType = 'text' | 'url' | 'image' | 'images' | 'video'
+type ResultType = 'text' | 'url' | 'image' | 'images' | 'video' | 'ocr'
 type OgMeta = {
   url?: string
   siteName?: string
@@ -14,9 +14,15 @@ type OgMeta = {
   favicon?: string
 }
 
+type OcrResult = {
+  description: string
+  locale?: string
+}
+
 type Payload =
   | { type: 'text'; value: string }
   | { type: 'url' | 'image' | 'images' | 'video'; value: string | string[]; meta: OgMeta }
+  | { type: 'ocr'; value: string; ocrResults: OcrResult[] }
 
 const props = defineProps<{
   modelValue?: string
@@ -31,11 +37,15 @@ const emit = defineEmits<{
   (e: 'update:modelValue', v: string): void
   (e: 'change', payload: Payload): void
   (e: 'og:error', err: string): void
+  (e: 'ocr:error', err: string): void
 }>()
 
 const input = ref(props.modelValue ?? '')
 const loadingOg = ref(false)
+const loadingOcr = ref(false)
 const og: any = ref<OgMeta | null>(null)
+const ocrResults = ref<OcrResult[]>([])
+const uploadedImage = ref<string | null>(null)
 const inputIsUrl = computed(() => isLikelyUrl(input.value))
 
 watch(() => props.modelValue, v => {
@@ -59,7 +69,17 @@ watch(input, async () => {
 })
 
 function emitChange() {
-  if (!input.value.trim()) return
+  if (!input.value.trim() && !uploadedImage.value) return
+  
+  if (uploadedImage.value && ocrResults.value.length > 0) {
+    emit('change', { 
+      type: 'ocr', 
+      value: ocrResults.value.map(r => r.description).join(' '),
+      ocrResults: ocrResults.value
+    })
+    return
+  }
+  
   if (!inputIsUrl.value) {
     emit('change', { type: 'text', value: input.value.trim() })
     return
@@ -130,6 +150,90 @@ function getOgHost(url?: string): string {
 
 const charCount = computed(() => input.value.length)
 const max = computed(() => props.maxLength ?? 2000)
+
+// File upload and OCR functions
+async function handleFileUpload(file: File) {
+  if (!file.type.startsWith('image/')) {
+    emit('ocr:error', 'Nur Bilddateien sind erlaubt')
+    return
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    emit('ocr:error', 'Datei zu groß (max 10MB)')
+    return
+  }
+
+  // Preview anzeigen
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    uploadedImage.value = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
+
+  // OCR durchführen
+  await performOcr(file)
+}
+
+async function performOcr(file: File) {
+  loadingOcr.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const results = await $fetch<OcrResult[]>('/api/ocr/extract', {
+      method: 'POST',
+      body: formData
+    })
+
+    ocrResults.value = results
+    
+    // Text aus OCR-Ergebnissen in Input setzen
+    if (results.length > 0) {
+      input.value = results.map(r => r.description).join(' ')
+      emit('update:modelValue', input.value)
+      emitChange()
+    }
+  } catch (e: any) {
+    emit('ocr:error', e?.message ?? 'OCR-Fehler')
+  } finally {
+    loadingOcr.value = false
+  }
+}
+
+function handleDrop(event: DragEvent) {
+  event.preventDefault()
+  const files = event.dataTransfer?.files
+  if (files && files.length > 0) {
+    handleFileUpload(files[0])
+  }
+}
+
+function handleDragOver(event: DragEvent) {
+  event.preventDefault()
+}
+
+async function handlePaste(event: ClipboardEvent) {
+  const items = event.clipboardData?.items
+  if (!items) return
+
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      event.preventDefault()
+      const file = item.getAsFile()
+      if (file) {
+        await handleFileUpload(file)
+      }
+      break
+    }
+  }
+}
+
+function clearImage() {
+  uploadedImage.value = null
+  ocrResults.value = []
+  input.value = ''
+  emit('update:modelValue', input.value)
+}
 </script>
 
 <template>
@@ -138,7 +242,11 @@ const max = computed(() => props.maxLength ?? 2000)
     <div class="flex items-center justify-between">
       <!-- <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Eingabe</span> -->
       <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs"
-        :class="inputIsUrl ? 'border-blue-300 text-blue-700 dark:border-blue-600 dark:text-blue-300' : 'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300'"
+        :class="{
+          'border-blue-300 text-blue-700 dark:border-blue-600 dark:text-blue-300': inputIsUrl,
+          'border-purple-300 text-purple-700 dark:border-purple-600 dark:text-purple-300': uploadedImage,
+          'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300': !inputIsUrl && !uploadedImage
+        }"
         title="Automatische Erkennung">
         <svg v-if="inputIsUrl" viewBox="0 0 24 24" class="h-3.5 w-3.5">
           <path fill="currentColor"
@@ -146,24 +254,95 @@ const max = computed(() => props.maxLength ?? 2000)
           <path fill="currentColor" d="M9 17a4 4 0 0 1 0-8h2a1 1 0 1 1 0 2H9a2 2 0 0 0 0 4h2a1 1 0 1 1 0 2H9Z" />
           <path fill="currentColor" d="M15 17h-2a1 1 0 1 1 0-2h2a2 2 0 0 0 0-4h-2a1 1 0 1 1 0-2h2a4 4 0 0 1 0 8Z" />
         </svg>
+        <svg v-else-if="uploadedImage" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+          <path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+        </svg>
         <svg v-else viewBox="0 0 24 24" class="h-3.5 w-3.5">
           <path fill="currentColor" d="M5 4h14v2H5zM5 9h14v2H5zM5 14h14v2H5zM5 19h10v2H5z" />
         </svg>
-        <span>{{ inputIsUrl ? 'URL' : 'Text' }}</span>
+        <span>{{ uploadedImage ? 'OCR' : inputIsUrl ? 'URL' : 'Text' }}</span>
       </span>
     </div>
 
     <!-- Textarea -->
     <div class="relative">
-      <textarea id="smart-claim-textarea" :rows="rows ?? 6" :maxlength="max" :disabled="disabled" v-model="input"
-        :placeholder="placeholder ?? 'Text eingeben oder eine URL einfügen…'"
-        class="block w-full resize-y rounded-xl border border-gray-300 bg-white/60 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" />
-      <div class="pointer-events-none absolute bottom-1 right-2 text-xs text-gray-500 dark:text-gray-400">{{ charCount
-        }}/{{ max }}</div>
+      <textarea 
+        id="smart-claim-textarea" 
+        :rows="rows ?? 6" 
+        :maxlength="max" 
+        :disabled="disabled || !!uploadedImage" 
+        v-model="input"
+        :placeholder="uploadedImage ? 'Text aus Bild erkannt...' : placeholder ?? 'Text eingeben, URL einfügen oder Bild hochladen/einfügen…'"
+        class="block w-full resize-y rounded-xl border border-gray-300 bg-white/60 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
+        @drop="handleDrop"
+        @dragover="handleDragOver"
+        @paste="handlePaste"
+      />
+      <div class="pointer-events-none absolute bottom-1 right-2 text-xs text-gray-500 dark:text-gray-400">{{ charCount }}/{{ max }}</div>
+      
+      <!-- File Upload Button -->
+      <div class="absolute bottom-2 left-2">
+        <input 
+          type="file" 
+          id="file-upload" 
+          accept="image/*" 
+          class="hidden" 
+          @change="(e) => { const file = (e.target as HTMLInputElement).files?.[0]; if (file) handleFileUpload(file) }"
+        >
+        <label 
+          for="file-upload" 
+          class="inline-flex items-center gap-1 rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-600 hover:bg-gray-200 cursor-pointer transition dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+          title="Bild hochladen"
+        >
+          <svg viewBox="0 0 24 24" class="h-3 w-3">
+            <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+          </svg>
+        </label>
+      </div>
+    </div>
+
+    <!-- OCR Loading -->
+    <div v-if="loadingOcr" class="mt-1">
+      <div class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300">
+        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25" />
+          <path d="M4 12a8 8 0 0 1 8-8" fill="currentColor" />
+        </svg>
+        Text wird aus Bild extrahiert…
+      </div>
+    </div>
+
+    <!-- Image Preview -->
+    <div v-if="uploadedImage" class="mt-1">
+      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div class="relative">
+          <img :src="uploadedImage" alt="Hochgeladenes Bild" class="w-full max-h-64 object-contain">
+          <button 
+            @click="clearImage"
+            class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 transition"
+            title="Bild entfernen"
+          >
+            <svg viewBox="0 0 24 24" class="h-4 w-4">
+              <path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+            </svg>
+          </button>
+        </div>
+        <div v-if="ocrResults.length > 0" class="border-t border-gray-100 p-3 dark:border-gray-800">
+          <div class="text-xs mb-2 text-gray-600 dark:text-gray-300">
+            Erkannter Text ({{ ocrResults.length }} Bereiche)
+          </div>
+          <div class="space-y-1 text-xs">
+            <div v-for="(result, i) in ocrResults" :key="i" class="p-2 bg-gray-50 rounded dark:bg-gray-800">
+              <span class="font-mono">{{ result.description }}</span>
+              <span v-if="result.locale" class="ml-2 text-gray-500 text-[10px]">({{ result.locale }})</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- OG Preview (URL mode) -->
-    <div v-if="inputIsUrl" class="mt-1">
+    <div v-if="inputIsUrl && !uploadedImage" class="mt-1">
 
       <div v-if="loadingOg"
         class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300">
