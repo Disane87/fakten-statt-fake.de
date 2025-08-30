@@ -1,5 +1,5 @@
 
-import type { SocialMedia } from '../../interfaces/SocialMedia';
+import type { SocialMediaConnector } from '../../interfaces/SocialMedia';
 import { getSocialMediaClass } from './SocialMediaRegistry';
 import { ThreadsSocialMedia } from './platforms/ThreadsSocialMedia';
 
@@ -10,7 +10,7 @@ const SOCIAL_MEDIA_CLASS_MAP: Record<string, any> = {
 };
 
 export class SocialMediaFactory {
-    static getSocialMedia(url: string): SocialMedia | null {
+    static getSocialMedia(url: string): SocialMediaConnector | null {
         try {
             const host = new URL(url).host.replace('www.', '');
             // Erst Decorator-Registry prüfen
