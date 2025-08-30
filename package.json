@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@google-cloud/vision": "^5.3.3",
     "@iconify/vue": "^5.0.0",
     "@nuxtjs/color-mode": "3.5.2",
     "@nuxtjs/supabase": "1.6.1",

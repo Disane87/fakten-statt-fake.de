@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Fakten-statt-fake.de",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
