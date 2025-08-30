@@ -45,7 +45,7 @@ watch(() => props.modelValue, v => {
 onMounted(() => {
   if (props.autoFocus) {
     requestAnimationFrame(() => {
-      ;(document.getElementById('smart-claim-textarea') as HTMLTextAreaElement | null)?.focus()
+      ; (document.getElementById('smart-claim-textarea') as HTMLTextAreaElement | null)?.focus()
     })
   }
   // initial detection
@@ -137,48 +137,48 @@ const max = computed(() => props.maxLength ?? 2000)
     <!-- Label + Mode badge -->
     <div class="flex items-center justify-between">
       <!-- <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Eingabe</span> -->
-      <span
-        class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs"
+      <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs"
         :class="inputIsUrl ? 'border-blue-300 text-blue-700 dark:border-blue-600 dark:text-blue-300' : 'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300'"
-        title="Automatische Erkennung"
-      >
-        <svg v-if="inputIsUrl" viewBox="0 0 24 24" class="h-3.5 w-3.5"><path fill="currentColor" d="M10.59 13.41a1 1 0 0 1 0-1.41l2.59-2.59a1 1 0 1 1 1.41 1.41l-2.59 2.59a1 1 0 0 1-1.41 0Z"/><path fill="currentColor" d="M9 17a4 4 0 0 1 0-8h2a1 1 0 1 1 0 2H9a2 2 0 0 0 0 4h2a1 1 0 1 1 0 2H9Z"/><path fill="currentColor" d="M15 17h-2a1 1 0 1 1 0-2h2a2 2 0 0 0 0-4h-2a1 1 0 1 1 0-2h2a4 4 0 0 1 0 8Z"/></svg>
-        <svg v-else viewBox="0 0 24 24" class="h-3.5 w-3.5"><path fill="currentColor" d="M5 4h14v2H5zM5 9h14v2H5zM5 14h14v2H5zM5 19h10v2H5z"/></svg>
+        title="Automatische Erkennung">
+        <svg v-if="inputIsUrl" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+          <path fill="currentColor"
+            d="M10.59 13.41a1 1 0 0 1 0-1.41l2.59-2.59a1 1 0 1 1 1.41 1.41l-2.59 2.59a1 1 0 0 1-1.41 0Z" />
+          <path fill="currentColor" d="M9 17a4 4 0 0 1 0-8h2a1 1 0 1 1 0 2H9a2 2 0 0 0 0 4h2a1 1 0 1 1 0 2H9Z" />
+          <path fill="currentColor" d="M15 17h-2a1 1 0 1 1 0-2h2a2 2 0 0 0 0-4h-2a1 1 0 1 1 0-2h2a4 4 0 0 1 0 8Z" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" class="h-3.5 w-3.5">
+          <path fill="currentColor" d="M5 4h14v2H5zM5 9h14v2H5zM5 14h14v2H5zM5 19h10v2H5z" />
+        </svg>
         <span>{{ inputIsUrl ? 'URL' : 'Text' }}</span>
       </span>
     </div>
 
     <!-- Textarea -->
     <div class="relative">
-      <textarea
-        id="smart-claim-textarea"
-        :rows="rows ?? 6"
-        :maxlength="max"
-        :disabled="disabled"
-        v-model="input"
+      <textarea id="smart-claim-textarea" :rows="rows ?? 6" :maxlength="max" :disabled="disabled" v-model="input"
         :placeholder="placeholder ?? 'Text eingeben oder eine URL einfügen…'"
-        class="block w-full resize-y rounded-xl border border-gray-300 bg-white/60 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
-      />
-      <div class="pointer-events-none absolute bottom-1 right-2 text-xs text-gray-500 dark:text-gray-400">{{ charCount }}/{{ max }}</div>
+        class="block w-full resize-y rounded-xl border border-gray-300 bg-white/60 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40" />
+      <div class="pointer-events-none absolute bottom-1 right-2 text-xs text-gray-500 dark:text-gray-400">{{ charCount
+        }}/{{ max }}</div>
     </div>
 
     <!-- OG Preview (URL mode) -->
     <div v-if="inputIsUrl" class="mt-1">
-      <div
-        v-if="loadingOg"
-        class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300"
-      >
-        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"/><path d="M4 12a8 8 0 0 1 8-8" fill="currentColor"/></svg>
+
+      <div v-if="loadingOg"
+        class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300">
+        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25" />
+          <path d="M4 12a8 8 0 0 1 8-8" fill="currentColor" />
+        </svg>
         Vorschau wird geladen…
       </div>
 
-      <div
-        v-else-if="og"
-        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900"
-      >
-        <div class="grid grid-cols-[96px,1fr] gap-0">
-          <div class="h-24 w-24 overflow-hidden bg-gray-100 dark:bg-gray-800">
-            <img v-if="og.image" :src="og.image" alt="" class="h-full w-full object-cover" />
+      <div v-else-if="og"
+        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div class="grid grid-cols-[96px,1fr] gap-0 overflow-hidden">
+          <div class="overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img v-if="og.image" :src="og.image" alt="" class="w-full object-fit" />
             <div v-else class="grid h-full w-full place-items-center text-gray-400">🔗</div>
           </div>
           <div class="p-3">
@@ -186,14 +186,11 @@ const max = computed(() => props.maxLength ?? 2000)
               <div class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
                 {{ og.title || 'Unbenannte Seite' }}
               </div>
-              <span
-                class="shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide"
-                :class="{
-                  'border-fuchsia-300 text-fuchsia-700 dark:border-fuchsia-600 dark:text-fuchsia-300': (og.type||'').includes('video'),
-                  'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300': !og.type || (og.type||'').includes('article'),
-                  'border-amber-300 text-amber-700 dark:border-amber-600 dark:text-amber-300': (og.images?.length ?? 0) > 1
-                }"
-              >
+              <span class="shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide" :class="{
+                'border-fuchsia-300 text-fuchsia-700 dark:border-fuchsia-600 dark:text-fuchsia-300': (og.type || '').includes('video'),
+                'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300': !og.type || (og.type || '').includes('article'),
+                'border-amber-300 text-amber-700 dark:border-amber-600 dark:text-amber-300': (og.images?.length ?? 0) > 1
+              }">
                 {{ (og.type?.toUpperCase()) || ((og.images?.length ?? 0) > 1 ? 'IMAGES' : 'URL') }}
               </span>
             </div>
@@ -219,10 +216,8 @@ const max = computed(() => props.maxLength ?? 2000)
         </div>
       </div>
 
-      <div
-        v-else
-        class="rounded-xl border border-dashed border-gray-300 p-3 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400"
-      >
+      <div v-else
+        class="rounded-xl border border-dashed border-gray-300 p-3 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
         Keine OG-Daten gefunden – die URL wird trotzdem als Quelle übernommen.
       </div>
     </div>
@@ -231,6 +226,11 @@ const max = computed(() => props.maxLength ?? 2000)
 
 <style scoped>
 /* optional: hübschere Scrollbar für die Textarea (nur WebKit) */
-textarea::-webkit-scrollbar{width:10px}
-textarea::-webkit-scrollbar-thumb{border-radius:8px}
+textarea::-webkit-scrollbar {
+  width: 10px
+}
+
+textarea::-webkit-scrollbar-thumb {
+  border-radius: 8px
+}
 </style>
