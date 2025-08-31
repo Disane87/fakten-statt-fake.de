@@ -24,6 +24,17 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/color-mode', '@nuxtjs/supabase', 'nuxt-openapi-docs-module'],
 
+  supabase: {
+    redirectOptions: {
+      login: false,
+      callback: false,
+      exclude: undefined
+    },
+    cookieOptions: {
+      maxAge: 0
+    }
+  },
+
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
     fallback: 'light', // fallback value if not system preference found

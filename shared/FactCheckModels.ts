@@ -15,6 +15,8 @@ export interface FactCheckResult {
     language: string;
     tone: string[];
     textType: string;
+    targetAudience: string[];
+    mentionedPersons: string[];
     claim: string[];
     keywords: string[];
     compactCounter: string;

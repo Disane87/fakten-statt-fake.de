@@ -70,16 +70,16 @@ watch(input, async () => {
 
 function emitChange() {
   if (!input.value.trim() && !uploadedImage.value) return
-  
+
   if (uploadedImage.value && ocrResults.value.length > 0) {
-    emit('change', { 
-      type: 'ocr', 
+    emit('change', {
+      type: 'ocr',
       value: ocrResults.value.map(r => r.description).join(' '),
       ocrResults: ocrResults.value
     })
     return
   }
-  
+
   if (!inputIsUrl.value) {
     emit('change', { type: 'text', value: input.value.trim() })
     return
@@ -186,7 +186,7 @@ async function performOcr(file: File) {
     })
 
     ocrResults.value = results
-    
+
     // Text aus OCR-Ergebnissen in Input setzen
     if (results.length > 0) {
       input.value = results.map(r => r.description).join(' ')
@@ -239,71 +239,68 @@ function clearImage() {
 <template>
   <div class="w-full flex flex-col gap-3">
     <!-- Label + Mode badge -->
-    <div class="flex items-center justify-between">
-      <!-- <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Eingabe</span> -->
-      <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs"
-        :class="{
-          'border-blue-300 text-blue-700 dark:border-blue-600 dark:text-blue-300': inputIsUrl,
-          'border-purple-300 text-purple-700 dark:border-purple-600 dark:text-purple-300': uploadedImage,
-          'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300': !inputIsUrl && !uploadedImage
-        }"
-        title="Automatische Erkennung">
-        <svg v-if="inputIsUrl" viewBox="0 0 24 24" class="h-3.5 w-3.5">
-          <path fill="currentColor"
-            d="M10.59 13.41a1 1 0 0 1 0-1.41l2.59-2.59a1 1 0 1 1 1.41 1.41l-2.59 2.59a1 1 0 0 1-1.41 0Z" />
-          <path fill="currentColor" d="M9 17a4 4 0 0 1 0-8h2a1 1 0 1 1 0 2H9a2 2 0 0 0 0 4h2a1 1 0 1 1 0 2H9Z" />
-          <path fill="currentColor" d="M15 17h-2a1 1 0 1 1 0-2h2a2 2 0 0 0 0-4h-2a1 1 0 1 1 0-2h2a4 4 0 0 1 0 8Z" />
-        </svg>
-        <svg v-else-if="uploadedImage" viewBox="0 0 24 24" class="h-3.5 w-3.5">
-          <path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-        </svg>
-        <svg v-else viewBox="0 0 24 24" class="h-3.5 w-3.5">
-          <path fill="currentColor" d="M5 4h14v2H5zM5 9h14v2H5zM5 14h14v2H5zM5 19h10v2H5z" />
-        </svg>
-        <span>{{ uploadedImage ? 'OCR' : inputIsUrl ? 'URL' : 'Text' }}</span>
-      </span>
-    </div>
 
-    <!-- Textarea -->
-    <div class="relative">
-      <textarea 
-        id="smart-claim-textarea" 
-        :rows="rows ?? 6" 
-        :maxlength="max" 
-        :disabled="disabled || !!uploadedImage" 
+
+    <!-- Textarea Container -->
+    <div
+      class="rounded-xl border border-gray-300 bg-white/60 shadow-sm transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:focus-within:border-blue-400 dark:focus-within:ring-blue-900/40">
+      <textarea id="smart-claim-textarea" :rows="rows ?? 6" :maxlength="max" :disabled="disabled || !!uploadedImage"
         v-model="input"
         :placeholder="uploadedImage ? 'Text aus Bild erkannt...' : placeholder ?? 'Text eingeben, URL einfügen oder Bild hochladen/einfügen…'"
-        class="block w-full resize-y rounded-xl border border-gray-300 bg-white/60 px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-900/40"
-        @drop="handleDrop"
-        @dragover="handleDragOver"
-        @paste="handlePaste"
-      />
-      <div class="pointer-events-none absolute bottom-1 right-2 text-xs text-gray-500 dark:text-gray-400">{{ charCount }}/{{ max }}</div>
-      
-      <!-- File Upload Button -->
-      <div class="absolute bottom-2 left-2">
-        <input 
-          type="file" 
-          id="file-upload" 
-          accept="image/*" 
-          class="hidden" 
-          @change="(e) => { const file = (e.target as HTMLInputElement).files?.[0]; if (file) handleFileUpload(file) }"
-        >
-        <label 
-          for="file-upload" 
-          class="inline-flex items-center gap-1 rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-600 hover:bg-gray-200 cursor-pointer transition dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-          title="Bild hochladen"
-        >
-          <svg viewBox="0 0 24 24" class="h-3 w-3">
-            <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-          </svg>
-        </label>
+        class="block w-full resize-y border-0 bg-transparent px-4 py-3 text-sm text-gray-900 outline-none dark:text-gray-100"
+        @drop="handleDrop" @dragover="handleDragOver" @paste="handlePaste" />
+
+      <div class="flex items-center justify-between bg-transparent p-2">
+        <div class="flex items-center justify-start">
+          <input type="file" id="file-upload" accept="image/*" class="hidden"
+            @change="(e) => { const file = (e.target as HTMLInputElement).files?.[0]; if (file) handleFileUpload(file) }">
+          <label for="file-upload"
+            class="inline-flex items-center gap-2 rounded-lg border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer transition dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+            title="Bild hochladen für Texterkennung">
+            <svg viewBox="0 0 24 24" class="h-4 w-4">
+              <path fill="currentColor"
+                d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+            </svg>
+            <span>Bild hochladen oder hier hineinziehen</span>
+          </label>
+        </div>
+        <div class="flex items-center justify-between">
+          <!-- <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Eingabe</span> -->
+          <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs" :class="{
+            'border-blue-300 text-blue-700 dark:border-blue-600 dark:text-blue-300': inputIsUrl,
+            'border-purple-300 text-purple-700 dark:border-purple-600 dark:text-purple-300': uploadedImage,
+            'border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300': !inputIsUrl && !uploadedImage
+          }" title="Automatische Erkennung">
+            <svg v-if="inputIsUrl" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+              <path fill="currentColor"
+                d="M10.59 13.41a1 1 0 0 1 0-1.41l2.59-2.59a1 1 0 1 1 1.41 1.41l-2.59 2.59a1 1 0 0 1-1.41 0Z" />
+              <path fill="currentColor" d="M9 17a4 4 0 0 1 0-8h2a1 1 0 1 1 0 2H9a2 2 0 0 0 0 4h2a1 1 0 1 1 0 2H9Z" />
+              <path fill="currentColor" d="M15 17h-2a1 1 0 1 1 0-2h2a2 2 0 0 0 0-4h-2a1 1 0 1 1 0-2h2a4 4 0 0 1 0 8Z" />
+            </svg>
+            <svg v-else-if="uploadedImage" viewBox="0 0 24 24" class="h-3.5 w-3.5">
+              <path fill="currentColor"
+                d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" class="h-3.5 w-3.5">
+              <path fill="currentColor" d="M5 4h14v2H5zM5 9h14v2H5zM5 14h14v2H5zM5 19h10v2H5z" />
+            </svg>
+            <span>{{ uploadedImage ? 'OCR' : inputIsUrl ? 'URL' : 'Text' }}</span>
+          </span>
+        </div>
+        <div class="flex items-center justify-end px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
+          <span>{{ charCount }}/{{ max }}</span>
+        </div>
       </div>
+
     </div>
+
+    <!-- File Upload Area -->
+
 
     <!-- OCR Loading -->
     <div v-if="loadingOcr" class="mt-1">
-      <div class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300">
+      <div
+        class="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-300">
         <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25" />
           <path d="M4 12a8 8 0 0 1 8-8" fill="currentColor" />
@@ -314,16 +311,16 @@ function clearImage() {
 
     <!-- Image Preview -->
     <div v-if="uploadedImage" class="mt-1">
-      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+      <div
+        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
         <div class="relative">
           <img :src="uploadedImage" alt="Hochgeladenes Bild" class="w-full max-h-64 object-contain">
-          <button 
-            @click="clearImage"
+          <button @click="clearImage"
             class="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 transition"
-            title="Bild entfernen"
-          >
+            title="Bild entfernen">
             <svg viewBox="0 0 24 24" class="h-4 w-4">
-              <path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+              <path fill="currentColor"
+                d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
             </svg>
           </button>
         </div>
@@ -355,14 +352,14 @@ function clearImage() {
 
       <div v-else-if="og"
         class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-        <div class="grid grid-cols-[96px,1fr] gap-0 overflow-hidden">
-          <div class="overflow-hidden bg-gray-100 dark:bg-gray-800">
-            <img v-if="og.image" :src="og.image" alt="" class="w-full object-fit" />
-            <div v-else class="grid h-full w-full place-items-center text-gray-400">🔗</div>
+        <div class="flex overflow-hidden">
+          <div class="w-24 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img v-if="og.image" :src="og.image" alt="" class="w-full h-full object-cover" />
+            <div v-else class="flex h-full w-full items-center justify-center text-gray-400">🔗</div>
           </div>
-          <div class="p-3">
-            <div class="flex items-center justify-between gap-2">
-              <div class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
+          <div class="flex-1 p-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                 {{ og.title || 'Unbenannte Seite' }}
               </div>
               <span class="shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide" :class="{
@@ -373,12 +370,12 @@ function clearImage() {
                 {{ (og.type?.toUpperCase()) || ((og.images?.length ?? 0) > 1 ? 'IMAGES' : 'URL') }}
               </span>
             </div>
-            <p class="mt-0.5 line-clamp-2 text-xs text-gray-600 dark:text-gray-300">
+            <p class="mt-0.5 text-xs text-gray-600 dark:text-gray-300">
               {{ og.description || og.url }}
             </p>
             <div class="mt-1 flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400">
               <img v-if="og.favicon" :src="og.favicon" alt="" class="h-3.5 w-3.5 rounded-sm" />
-              <span class="truncate">{{ og.siteName || getOgHost(og.url) }}</span>
+              <span>{{ og.siteName || getOgHost(og.url) }}</span>
 
             </div>
           </div>
@@ -389,8 +386,8 @@ function clearImage() {
         </div>
         <div v-else-if="og.images && og.images.length > 1" class="border-t border-gray-100 p-3 dark:border-gray-800">
           <div class="text-xs mb-2 text-gray-600 dark:text-gray-300">Erkannte Bilder ({{ og.images.length }})</div>
-          <div class="grid grid-cols-3 gap-2">
-            <img v-for="(img, i) in og.images" :key="i" :src="img" class="h-20 w-full rounded object-cover" />
+          <div class="flex flex-wrap gap-2">
+            <img v-for="(img, i) in og.images" :key="i" :src="img" class="h-20 w-20 rounded object-cover" />
           </div>
         </div>
       </div>

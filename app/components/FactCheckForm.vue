@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-6xl mx-auto mt-6 flex flex-col gap-8 lg:flex-row items-start">
+  <div class="max-w-6xl mx-auto mt-6 flex flex-col gap-8 lg:flex-row items-start justify-center">
     <!-- Form left -->
-    <div class="flex-1 w-1/2 bg-panel p-8 rounded-2xl shadow-xl border border-border transition-colors">
+    <div class="w-full lg:w-1/2 bg-panel p-8 rounded-2xl shadow-xl border border-border transition-colors">
       <h2 class="text-2xl font-extrabold mb-4 tracking-tight text-card-foreground flex items-center gap-2">
         🕵️‍♂️ Fact Check
         <svg v-if="loading" class="h-5 w-5 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,16 +25,11 @@
 
     <!-- Result right (sticky on desktop) -->
     <div v-if="result"
-      class="flex-1 w-1/2 lg:sticky lg:top-24 bg-panel p-8 rounded-2xl shadow-xl border border-border transition-colors min-w-0">
-      <!-- Error alert -->
-      <!-- {{  result }} -->
+      class="w-full lg:w-1/2 lg:sticky lg:top-24 rounded-2xl min-w-0">
 
-      <div v-if="result.error" class="rounded-xl border border-rose-500/20 p-5 bg-rose-500/5">
-        <div class="text-sm font-semibold text-rose-600 dark:text-rose-400 mb-1">Error</div>
-        <p class="text-card-foreground/90">{{ result.error }}</p>
-      </div>
+     
 
-      <FactCheckResult v-else :result="result" :moodPill="moodPill" :flagCode="flagCode" :getFavicon="getFavicon" />
+      <FactCheckResult  :result="result" :moodPill="moodPill" :flagCode="flagCode" :getFavicon="getFavicon" />
     </div>
   </div>
 
