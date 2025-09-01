@@ -245,9 +245,9 @@ function clearImage() {
     <div
       class="rounded-xl border border-gray-300 bg-white/60 shadow-sm transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 dark:border-gray-700 dark:bg-gray-900/60 dark:focus-within:border-blue-400 dark:focus-within:ring-blue-900/40">
       <textarea id="smart-claim-textarea" :rows="rows ?? 6" :maxlength="max" :disabled="disabled || !!uploadedImage"
-        v-model="input"
+        v-model="input" 
         :placeholder="uploadedImage ? 'Text aus Bild erkannt...' : placeholder ?? 'Text eingeben, URL einfügen oder Bild hochladen/einfügen…'"
-        class="block w-full resize-y border-0 bg-transparent px-4 py-3 text-sm text-gray-900 outline-none dark:text-gray-100"
+        class="block w-full border-0 bg-transparent px-4 py-3 text-sm text-gray-900 outline-none dark:text-gray-100 resize-none"
         @drop="handleDrop" @dragover="handleDragOver" @paste="handlePaste" />
 
       <div class="flex items-center justify-between bg-transparent p-2">
