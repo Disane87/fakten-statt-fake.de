@@ -84,4 +84,24 @@ export class SupabaseService {
         }
         return { content: null, id: null }
     }
+
+    async getClaimById(id: number): Promise<any | null> {
+        const client = await this.getClient();
+        const { data, error } = await client
+            .from('claims')
+            .select('*')
+            .eq('id', id)
+            .single()
+
+        if (error) {
+            console.error('Supabase error getClaimById:', { id, error })
+            if (error.code === 'PGRST116') {
+                // No rows found
+                return null
+            }
+            throw createError({ statusCode: 500, statusMessage: `Error fetching claim: ${error.message || JSON.stringify(error)}` })
+        }
+
+        return data
+    }
 }

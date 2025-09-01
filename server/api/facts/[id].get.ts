@@ -2,7 +2,7 @@ import { SupabaseService } from '../../services/SupabaseService'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  
+
   if (!id) {
     throw createError({
       statusCode: 400,
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   try {
     const supabaseService = new SupabaseService(event)
     const claim = await supabaseService.getClaimById(numericId)
-    
+
     if (!claim) {
       throw createError({
         statusCode: 404,
@@ -43,12 +43,12 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error: any) {
     console.error('Error fetching fact:', error)
-    
+
     // Re-throw createError instances
     if (error.statusCode) {
       throw error
     }
-    
+
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal server error while fetching fact'

@@ -36,18 +36,23 @@ export default defineEventHandler(async (event) => {
     if (cached && cached.result) {
         return cached.result
     }
+
+    const runtimeConfig = useRuntimeConfig();
+    const ollamaModel: string = runtimeConfig.ollamaModel as string;
     // 1. Initiale KI-Prüfung und Keywords/Sources holen über OllamaService
-    const ollamaService = new OllamaService(event, 'gemma3:4b')
+    const ollamaService = new OllamaService(event)
     let { result, promptId } = await ollamaService.generateFactCheck(text)
     if (!result || !promptId) {
         return Error('Failed to generate a valid response from the AI.')
     }
     if (result && result.sources) {
         const factCheckService = new FactCheckService(process.env.NEWSAPI_KEY || '', event)
-        result.sources = result.sources.map((src: any) => {
-            const { pageContent, ...meta } = src
-            return meta
-        })
+        result.sources = result.sources
+            .map((src: any) => {
+                const { pageContent, ...meta } = src
+                return meta
+            })
+            .filter((src: any) => Object.keys(src).length > 0)
     }
     await claimStore.saveClaim(text, result, promptId)
     console.log('Factcheck result:', result)

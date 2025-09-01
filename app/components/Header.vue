@@ -1,8 +1,8 @@
 <template>
-    <header class="glass sticky top-0 z-40">
+    <header class="sticky top-0 z-40 transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white/95 supports-backdrop-blur:bg-white/60 dark:bg-transparent">
         <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="h-8 w-8 rounded-full bg-brand grid place-items-center font-semibold text-white shadow">
+                <div class="h-8 w-8 rounded-md bg-brand grid place-items-center font-semibold text-white shadow">
                     FS
                 </div>
                 <a href="#" class="font-semibold hover:opacity-90">Fakten statt Fakes</a>

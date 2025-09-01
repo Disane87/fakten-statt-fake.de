@@ -1,13 +1,16 @@
 import { $fetch } from 'ofetch'
 import { PromptBuilderService } from './PromptBuilderService'
+import type { H3Event, EventHandlerRequest } from 'h3';
 
 export class OllamaService {
     model: string
     ollamaUrl: string
     promptBuilder: PromptBuilderService
-    constructor(event?: any, model?: string, ollamaUrl?: string) {
-        this.model = model || process.env.OLLAMA_MODEL || 'gemma3:4b'
-        this.ollamaUrl = ollamaUrl || process.env.OLLAMA_URL || 'http://localhost:11434/api/generate'
+    constructor(event?: H3Event<EventHandlerRequest>) {
+
+        const { ollamaModel, ollamaUrl: configOllamaUrl } = useRuntimeConfig();
+        this.model = (ollamaModel) as string
+        this.ollamaUrl = (configOllamaUrl) as string
         this.promptBuilder = new PromptBuilderService(event)
     }
     async generateFactCheck(text: string): Promise<{ result: any, promptId: number | null }> {

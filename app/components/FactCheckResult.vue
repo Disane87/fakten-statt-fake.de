@@ -6,22 +6,16 @@
         <!-- Status Badge -->
         <div class="flex items-center gap-3">
           <div v-if="result.result === 'fact'" 
-               class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
+               class="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center">
+            <CheckCircle class="w-6 h-6 text-emerald-400" />
           </div>
           <div v-else-if="result.result === 'fake'" 
-               class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
+               class="w-12 h-12 rounded-full bg-red-500/20 border border-red-400/30 flex items-center justify-center">
+            <XCircle class="w-6 h-6 text-red-400" />
           </div>
           <div v-else 
-               class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
+               class="w-12 h-12 rounded-full bg-gray-500/20 border border-gray-400/30 flex items-center justify-center">
+            <HelpCircle class="w-6 h-6 text-gray-400" />
           </div>
           
           <div>
@@ -44,16 +38,12 @@
         
         <!-- Quick Stats -->
         <div class="flex gap-4 text-sm">
-          <div v-if="result.sources?.length" class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
+          <div v-if="result.sources?.length > 0" class="flex items-center gap-1">
+            <BookOpen class="w-4 h-4 text-blue-400" />
             <span class="text-slate-300">{{ result.sources.length }} sources</span>
           </div>
           <div v-if="result.keywords?.length" class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-            </svg>
+            <Tag class="w-4 h-4 text-yellow-400" />
             <span class="text-slate-300">{{ result.keywords.length }} keywords</span>
           </div>
         </div>
@@ -77,9 +67,7 @@
     <div v-if="result.explanation" class="p-4 border-b border-slate-600">
       <div class="bg-blue-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-          </svg>
+          <Lightbulb class="w-5 h-5 text-blue-400" />
           <h3 class="font-bold text-blue-300 text-sm">Analysis</h3>
         </div>
         <p class="text-blue-200 text-sm leading-relaxed">
@@ -87,9 +75,7 @@
         </p>
         <details v-if="result.explanationDetails" class="mt-2">
           <summary class="cursor-pointer text-xs text-blue-400 font-medium hover:underline flex items-center gap-1">
-            <svg class="w-3 h-3 rotate-0 group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            <ChevronRight class="w-3 h-3 rotate-0 group-open:rotate-90 transition-transform" />
             Show detailed analysis
           </summary>
           <p class="mt-2 text-xs text-blue-300 leading-relaxed">{{ result.explanationDetails }}</p>
@@ -102,9 +88,7 @@
       <!-- Counter Evidence (only for fake/unknown) -->
       <div v-if="result.compactCounter && result.result !== 'fact'" class="bg-red-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
+          <Shield class="w-5 h-5 text-red-400" />
           <h3 class="font-bold text-red-300 text-sm">Counter Evidence</h3>
         </div>
         <p class="text-red-200 text-sm leading-relaxed">{{ result.compactCounter?.substring(0, 120) }}{{ (result.compactCounter?.length || 0) > 120 ? '...' : '' }}</p>
@@ -113,9 +97,7 @@
       <!-- Manipulation Tactics -->
       <div v-if="result.result === 'fake' && result.fakeTactic?.length" class="bg-amber-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-3">
-          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-          </svg>
+          <AlertTriangle class="w-5 h-5 text-amber-400" />
           <h3 class="font-bold text-amber-300 text-sm">Manipulation Tactics</h3>
         </div>
         <div class="space-y-2">
@@ -136,9 +118,7 @@
       <!-- Tone -->
       <div v-if="result.tone?.length" class="bg-purple-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 4v10a2 2 0 002 2h6a2 2 0 002-2V8M7 8h10M9 12h6m-6 4h6"/>
-          </svg>
+          <MessageCircle class="w-5 h-5 text-purple-400" />
           <h3 class="font-bold text-purple-300 text-sm">Tone</h3>
         </div>
         <div class="flex flex-wrap gap-1">
@@ -153,9 +133,7 @@
       <!-- Target Audience -->
       <div v-if="result.targetAudience?.length" class="bg-indigo-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-          </svg>
+          <Users class="w-5 h-5 text-indigo-400" />
           <h3 class="font-bold text-indigo-300 text-sm">Audience</h3>
         </div>
         <div class="space-y-1">
@@ -170,9 +148,7 @@
       <!-- Keywords -->
       <div v-if="result.keywords?.length" class="bg-slate-700 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-          </svg>
+          <Tag class="w-5 h-5 text-yellow-400" />
           <h3 class="font-bold text-slate-300 text-sm">Keywords</h3>
         </div>
         <div class="flex flex-wrap gap-1">
@@ -190,9 +166,7 @@
       <div class="bg-emerald-900/30 rounded-lg p-4">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
+            <BookOpen class="w-5 h-5 text-emerald-400" />
             <h3 class="font-bold text-emerald-300 text-sm">Sources</h3>
           </div>
           <div class="flex gap-2">
@@ -228,9 +202,7 @@
     <div v-if="result.mentionedPersons?.length" class="px-4 pb-4">
       <div class="bg-teal-900/30 rounded-lg p-4">
         <div class="flex items-center gap-2 mb-2">
-          <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-          </svg>
+          <User class="w-5 h-5 text-teal-400" />
           <h3 class="font-bold text-teal-300 text-sm">Mentioned Persons</h3>
         </div>
         <div class="flex flex-wrap gap-1">
@@ -247,9 +219,7 @@
     <div v-if="result.claim?.length > 1" class="border-t border-slate-600 p-4">
       <details class="group">
         <summary class="cursor-pointer text-sm font-medium text-slate-400 hover:text-slate-300 flex items-center gap-2">
-          <svg class="w-4 h-4 group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
+          <ChevronRight class="w-4 h-4 group-open:rotate-90 transition-transform" />
           Show all {{ result.claim.length }} claims
         </summary>
         <div class="mt-3 space-y-2">
@@ -266,6 +236,20 @@
 
 <script setup lang="ts">
 import type { FactCheckResult } from '../../shared/FactCheckModels'
+import { 
+  CheckCircle, 
+  XCircle, 
+  HelpCircle, 
+  BookOpen, 
+  Tag, 
+  Lightbulb, 
+  ChevronRight, 
+  Shield, 
+  AlertTriangle, 
+  MessageCircle, 
+  Users, 
+  User 
+} from 'lucide-vue-next'
 
 const props = defineProps<{
   result: FactCheckResult | null

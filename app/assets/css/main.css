@@ -1,17 +1,26 @@
 @import "tailwindcss";
 @import "flag-icons/css/flag-icons.min.css";
 
-/* Design-Tokens (Light-Default) */
-@theme {
-    /* Fonts optional: */
-    --font-sans: ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+/* Optional: passende Webfonts (neutral & modern) */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Cormorant+Garamond:wght@600;700&display=swap");
 
-    /* Brand */
-    --color-brand: #6366f1;
-    /* Indigo 500 */
-    --color-brand-600: #5458e5;
-    --color-accent: #22c55e;
-    /* Emerald 500 */
+/* =========================
+   Base Theme (Light)
+   ========================= */
+@theme {
+    /* Fonts */
+    --font-sans: "Manrope", ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-display: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: ui-monospace, "SFMono-Regular", "Segoe UI Mono", "Roboto Mono", "Courier New", monospace;
+
+    /* ---------- Neutral/Trust Palette (Default) ---------- */
+    /* Brand (Blau) – wirkt seriös, „Fakten/Trust“ */
+    --color-brand: #2563eb;
+    /* Blue-600 */
+    --color-brand-600: #1d4ed8;
+    /* Blue-700 */
+    --color-accent: #10b981;
+    /* Emerald-500 */
 
     /* Base surfaces (LIGHT) */
     --color-background: #f8fafc;
@@ -48,52 +57,117 @@
     /* Sky-500 */
     --color-info-foreground: #083344;
     /* Sky-950 */
+
+    /* ---------- Deine „Salbei/Kupfer“-Palette als Tokens ---------- */
+    --color-sage: #A8B5A2;
+    /* Salbei */
+    --color-copper: #B87333;
+    /* Kupfer */
+    --color-anthracite: #2F2F2F;
+    /* Anthrazit */
+    --color-cream: #F9F9F7;
+    /* Creme */
+
+    /* Abgeleitete Tints/Shades (nützlich für Hover/States) */
+    --color-sage-600: #8fa38a;
+    --color-sage-100: #e8eee5;
+    --color-copper-600: #9e642b;
+    --color-copper-100: #f3e7dc;
+    --color-anthracite-600: #262626;
+    --color-anthracite-300: #4b4b4b;
+    --color-cream-600: #ebe8e2;
+
+    /* OG/Meta Empfehlung (nur Info) */
+    --og-width: 1200;
+    --og-height: 630;
 }
 
+/* =========================
+   Dark Mode (global)
+   ========================= */
 @layer theme {
     .dark {
-        /* Fonts optional: */
-        --font-sans: ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        --font-sans: "Manrope", ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        --font-display: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
-        /* Brand */
-        --color-brand: #6366f1;
-        --color-brand-600: #5458e5;
+        /* Neutral/Trust Palette (Dark) */
+        --color-brand: #3b82f6;
+        /* Blue-500 (etwas heller für Dark) */
+        --color-brand-600: #2563eb;
+        /* Blue-600 */
         --color-accent: #22c55e;
+        /* Green-500 */
 
-        /* Base surfaces (DARK) */
         --color-background: #0b1220;
         /* Sehr dunkles Blau/Schwarz */
-        --color-panel: #1a1a2e;
-        /* Cards/Nav dunkel */
-        --color-muted: #232946;
-        /* Subtle surfaces dunkel */
-        --color-border: #2d334a;
+        --color-panel: #111827;
+        /* Gray-900 */
+        --color-muted: #1f2937;
         /* Gray-800 */
+        --color-border: #2d334a;
+        /* Blau-Grau */
 
-        /* Text (DARK) */
         --color-ink: #f8fafc;
         /* Main text hell */
         --color-card-foreground: #f8fafc;
         /* Gray-50 */
         --color-muted-foreground: #a1a1aa;
-        /* Slate-400 */
+        /* Gray-400 */
 
-        /* Semantic (DARK) */
         --color-success: #22c55e;
         /* Green-500 */
         --color-success-foreground: #f0fdf4;
-        /* Green-50 */
         --color-error: #ef4444;
         /* Red-500 */
         --color-error-foreground: #fef2f2;
-        /* Red-50 */
         --color-warning: #f59e0b;
         /* Amber-500 */
         --color-warning-foreground: #fef6e7;
-        /* Amber-50 */
-        --color-info: #0ea5e9;
-        /* Sky-500 */
+        --color-info: #38bdf8;
+        /* Sky-400 */
         --color-info-foreground: #e0f2fe;
-        /* Sky-50 */
+
+        /* Salbei/Kupfer in Dark (angepasste Helligkeit) */
+        --color-sage: #9aac95;
+        --color-copper: #c07a39;
+        --color-anthracite: #e5e5e5;
+        /* Text auf dunklem BG → hell */
+        --color-cream: #1a1a1a;
+        /* Cremige, dunkle Fläche */
+    }
+
+    /* =========================
+     Umschalten auf „Salbei/Kupfer“-Brand
+     Nutze <body class="use-copper"> um diese Palette als Brand zu aktivieren.
+     ========================= */
+    .use-copper {
+        --color-brand: var(--color-sage);
+        --color-brand-600: var(--color-sage-600);
+        --color-accent: var(--color-copper);
+
+        --color-background: var(--color-cream);
+        --color-panel: #ffffff;
+        --color-muted: var(--color-sage-100);
+        --color-border: #e6e2dc;
+
+        --color-ink: var(--color-anthracite);
+        --color-card-foreground: var(--color-anthracite);
+        --color-muted-foreground: #5f6a60;
+    }
+
+    .dark.use-copper {
+        --color-brand: var(--color-sage);
+        --color-brand-600: #7d9076;
+        --color-accent: var(--color-copper);
+
+        --color-background: #0f1210;
+        /* dunkles „Creme“ */
+        --color-panel: #171a18;
+        --color-muted: #1f2421;
+        --color-border: #2a2f2c;
+
+        --color-ink: #eef1ed;
+        --color-card-foreground: #f2f4f1;
+        --color-muted-foreground: #aeb7ad;
     }
 }
