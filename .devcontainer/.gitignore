@@ -1,0 +1,10 @@
+# Ignorieren von Ollama-Daten und temporären Dateien
+ollama_data/
+supabase_data/
+postgres_data/
+
+# Logs
+*.log
+
+# Temporäre Setup-Dateien
+.setup-*
