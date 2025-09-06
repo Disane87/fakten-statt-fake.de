@@ -1,30 +1,39 @@
 <template>
-    <header class="sticky top-0 z-40 transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white/95 supports-backdrop-blur:bg-white/60 dark:bg-transparent">
+    <header class="sticky top-0 z-40 transition-all duration-500 lg:z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl supports-backdrop-blur:bg-background/60">
         <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="h-8 w-8 rounded-md bg-brand grid place-items-center font-semibold text-white shadow">
+                <div class="h-8 w-8 rounded-xl bg-gradient-to-br from-brand to-brand-600 grid place-items-center font-bold text-white shadow-lg">
                     FS
                 </div>
-                <a href="#" class="font-semibold hover:opacity-90">Fakten statt Fakes</a>
+                <a href="#" class="font-bold text-lg bg-gradient-to-r from-ink to-ink/80 bg-clip-text text-transparent hover:from-brand hover:to-brand-600 transition-all duration-300">
+                    Fakten statt Fakes
+                </a>
             </div>
 
-            <ul class="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-                <li><a class="hover:text-card-foreground transition-colors" href="#">Leitfaden</a></li>
-                <li><a class="hover:text-card-foreground transition-colors" href="#">Faktenchecks</a></li>
-                <li><a class="hover:text-card-foreground transition-colors" href="#">Werkzeuge</a></li>
-                <li><a class="hover:text-card-foreground transition-colors" href="#">FAQ</a></li>
+            <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+                <li><a class="hover:text-ink dark:hover:text-panel transition-colors duration-200 hover:underline underline-offset-4" href="#">Leitfaden</a></li>
+                <li><a class="hover:text-ink dark:hover:text-panel transition-colors duration-200 hover:underline underline-offset-4" href="#">Faktenchecks</a></li>
+                <li><a class="hover:text-ink dark:hover:text-panel transition-colors duration-200 hover:underline underline-offset-4" href="#">Werkzeuge</a></li>
+                <li><a class="hover:text-ink dark:hover:text-panel transition-colors duration-200 hover:underline underline-offset-4" href="#">FAQ</a></li>
             </ul>
 
             <div class="flex items-center gap-3">
-                <button @click="toggleDark"
-                    class="text-xs px-3 py-2 rounded-lg border border-border hover:bg-muted transition-colors">
-                    <span v-if="colorMode.value === 'light'">🌙</span>
-                    <span v-else>☀️</span>
+                <button @click="toggleDark" class="theme-toggle group">
+                    <ClientOnly>
+                        <div class="flex items-center justify-center transition-all duration-300">
+                            <span v-if="colorMode.value === 'light'" class="text-lg transform group-hover:rotate-12 transition-transform duration-300">🌙</span>
+                            <span v-else class="text-lg transform group-hover:rotate-12 transition-transform duration-300">☀️</span>
+                        </div>
+                        <template #fallback>
+                            <div class="w-4 h-4 rounded-full bg-muted animate-pulse"></div>
+                        </template>
+                    </ClientOnly>
                 </button>
 
-                <a href="#check" class="hidden sm:inline-block text-sm font-semibold px-4 py-2 rounded-lg text-white
-                   bg-[linear-gradient(180deg,var(--color-brand),var(--color-brand-600))]
-                   hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand/40 transition">Fakten prüfen</a>
+                <a href="#check" class="btn-primary hidden sm:inline-flex items-center gap-2">
+                   <span>🔍</span>
+                   Fakten prüfen
+                </a>
             </div>
         </nav>
     </header>
