@@ -1,8 +1,8 @@
 import { $fetch } from 'ofetch'
-import { FactCheckService } from '../../services/FactCheckService'
-import { OllamaService } from '../../services/OllamaService'
-import { ClaimStoreService } from '../../services/ClaimStoreService'
-import { SocialMediaFactory } from '../../services/socialMedia/SocialMediaFactory'
+// import { FactCheckService } from '../../services/FactCheckService'
+// import { OllamaService } from '../../services/OllamaService'
+// import { ClaimStoreService } from '../../services/ClaimStoreService'
+// import { SocialMediaFactory } from '../../services/socialMedia/SocialMediaFactory'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
@@ -11,6 +11,19 @@ export default defineEventHandler(async (event) => {
         return { error: 'No text provided.' }
     }
 
+    // For demonstration purposes, return a mock result
+    return {
+        claim: text,
+        rating: "needs-verification",
+        confidence: 0.7,
+        reasoning: "This is a mock result since the backend services are temporarily disabled.",
+        sources: [],
+        fact_check_summary: "Mock fact check result for theme development",
+        created_at: new Date().toISOString()
+    }
+
+    // Commented out for theme development - original implementation:
+    /*
     // Social-Media-Erkennung und Extraktion
     let socialMediaText: string | null = null;
     try {
@@ -57,4 +70,5 @@ export default defineEventHandler(async (event) => {
     await claimStore.saveClaim(text, result, promptId)
     console.log('Factcheck result:', result)
     return result
+    */
 })
