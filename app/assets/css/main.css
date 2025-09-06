@@ -71,15 +71,113 @@
     /* Abgeleitete Tints/Shades (nützlich für Hover/States) */
     --color-sage-600: #8fa38a;
     --color-sage-100: #e8eee5;
+    --color-sage-50: #f4f6f3;      /* Added lighter sage */
     --color-copper-600: #9e642b;
     --color-copper-100: #f3e7dc;
+    --color-copper-50: #faf6f2;    /* Added lighter copper */
     --color-anthracite-600: #262626;
     --color-anthracite-300: #4b4b4b;
     --color-cream-600: #ebe8e2;
 
+    /* Enhanced color tokens for modern theming */
+    --color-brand-700: #1e40af;     /* Blue-800 - Even darker */
+    --color-brand-50: #eff6ff;      /* Blue-50 - Very light brand */
+    --color-brand-100: #dbeafe;     /* Blue-100 - Light brand */
+    --color-accent-600: #059669;    /* Emerald-600 */
+    --color-ring: #93c5fd;          /* Focus ring color */
+    
+    /* Enhanced semantic backgrounds */
+    --color-success-bg: #f0fdf4;    /* Green-50 */
+    --color-error-bg: #fef2f2;      /* Red-50 */
+    --color-warning-bg: #fffbeb;    /* Amber-50 */
+    --color-info-bg: #eff6ff;       /* Blue-50 */
+
     /* OG/Meta Empfehlung (nur Info) */
     --og-width: 1200;
     --og-height: 630;
+}
+
+/* =========================
+   Enhanced Utility Classes
+   ========================= */
+@layer utilities {
+    .animate-in {
+        animation: animate-in 0.5s ease-out;
+    }
+
+    .slide-in-from-right {
+        animation: slide-in-from-right 0.5s ease-out;
+    }
+
+    .shadow-3xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, var(--color-brand), var(--color-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Glass morphism effects */
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark .glass {
+        background: rgba(30, 41, 59, 0.3);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+}
+
+@keyframes animate-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-in-from-right {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* =========================
+   Enhanced Component Styles
+   ========================= */
+@layer components {
+    .btn-primary {
+        @apply bg-gradient-to-r from-brand to-brand-600 hover:from-brand-600 hover:to-brand-700;
+        @apply text-white font-semibold px-6 py-3 rounded-2xl;
+        @apply shadow-lg hover:shadow-xl transition-all duration-200;
+        @apply focus:outline-none focus:ring-4 focus:ring-brand/30;
+        @apply hover:scale-105 active:scale-95;
+    }
+
+    .card {
+        @apply bg-panel/50 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50;
+        @apply transition-all duration-300 hover:shadow-3xl hover:border-border;
+    }
+
+    .theme-toggle {
+        @apply relative flex items-center justify-center w-10 h-10 rounded-xl;
+        @apply border border-border bg-panel hover:bg-muted;
+        @apply transition-all duration-300 hover:scale-105;
+        @apply focus:outline-none focus:ring-2 focus:ring-brand/40;
+    }
 }
 
 /* =========================
@@ -90,29 +188,40 @@
         --font-sans: "Manrope", ui-sans-serif, system-ui, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
         --font-display: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
-        /* Neutral/Trust Palette (Dark) */
-        --color-brand: #3b82f6;
-        /* Blue-500 (etwas heller für Dark) */
-        --color-brand-600: #2563eb;
-        /* Blue-600 */
-        --color-accent: #22c55e;
-        /* Green-500 */
+        /* Enhanced Brand Colors (Dark) */
+        --color-brand: #3b82f6;         /* Blue-500 - Lighter for dark mode */
+        --color-brand-600: #2563eb;     /* Blue-600 */
+        --color-brand-700: #1d4ed8;     /* Blue-700 */
+        --color-brand-50: #1e3a8a;      /* Dark blue for backgrounds */
+        --color-brand-100: #1e40af;     /* Dark blue variant */
+        --color-accent: #22c55e;        /* Green-500 - Good contrast */
+        --color-accent-600: #16a34a;    /* Green-600 */
 
-        --color-background: #0b1220;
-        /* Sehr dunkles Blau/Schwarz */
-        --color-panel: #111827;
-        /* Gray-900 */
-        --color-muted: #1f2937;
-        /* Gray-800 */
-        --color-border: #2d334a;
-        /* Blau-Grau */
+        /* Enhanced Surface Colors (Dark) */
+        --color-background: #0b1220;    /* Very dark blue/black */
+        --color-panel: #1e293b;         /* Slate-800 - Warmer than gray */
+        --color-muted: #334155;         /* Slate-700 - Better contrast */
+        --color-border: #475569;        /* Slate-600 - Visible but subtle */
+        --color-ring: #60a5fa;          /* Blue-400 - Focus ring */
 
-        --color-ink: #f8fafc;
-        /* Main text hell */
-        --color-card-foreground: #f8fafc;
-        /* Gray-50 */
-        --color-muted-foreground: #a1a1aa;
-        /* Gray-400 */
+        /* Enhanced Text Colors (Dark) */
+        --color-ink: #f8fafc;           /* Slate-50 - Primary text */
+        --color-card-foreground: #e2e8f0; /* Slate-200 - Secondary text */
+        --color-muted-foreground: #94a3b8; /* Slate-400 - Better contrast */
+
+        /* Enhanced Semantic Colors (Dark) */
+        --color-success: #22c55e;       /* Green-500 */
+        --color-success-foreground: #dcfce7; /* Green-100 */
+        --color-success-bg: #14532d;   /* Green-900 */
+        --color-error: #ef4444;         /* Red-500 */
+        --color-error-foreground: #fecaca; /* Red-200 */
+        --color-error-bg: #7f1d1d;     /* Red-900 */
+        --color-warning: #f59e0b;       /* Amber-500 */
+        --color-warning-foreground: #fef3c7; /* Amber-100 */
+        --color-warning-bg: #78350f;   /* Amber-900 */
+        --color-info: #3b82f6;          /* Blue-500 */
+        --color-info-foreground: #dbeafe; /* Blue-100 */
+        --color-info-bg: #1e3a8a;      /* Blue-900 */
 
         --color-success: #22c55e;
         /* Green-500 */
