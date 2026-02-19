@@ -12,11 +12,22 @@ export default defineNuxtConfig({
     googleCseCxId: process.env.GOOGLE_CSE_CX_ID,
     ollamaModel: process.env.OLLAMA_MODEL,
     ollamaUrl: process.env.OLLAMA_URL,
+    ollamaEmbedModel: process.env.OLLAMA_EMBED_MODEL || 'nomic-embed-text',
     threadsAppId: process.env.THREADS_APP_ID,
     threadsAppSecret: process.env.THREADS_APP_SECRET
   },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+    scheduledTasks: {
+      // Run RSS ingestion every 6 hours
+      '0 */6 * * *': ['rag:ingest'],
+    },
+  },
 
   css: [
     '@/assets/css/main.css'
